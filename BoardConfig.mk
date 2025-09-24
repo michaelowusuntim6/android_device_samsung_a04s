@@ -119,6 +119,7 @@ TW_INCLUDE_LPTOOLS := true
 TW_EXCLUDE_APEX := true
 TW_EXTRA_LANGUAGES := true
 BOARD_USES_RECOVERY_AS_BOOT := true
+TW_HAS_NO_RECOVERY_PARTITION := true
 
 # Making the recovery.img smaller
 BOARD_HAS_NO_REAL_SDCARD := true
