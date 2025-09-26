@@ -135,6 +135,7 @@ TW_NO_HAPTICS := true
 TW_EXCLUDE_SUPERSU := true
 TW_NO_BATT_PERCENT := true
 TW_NO_CPU_TEMP := true
+TW_EXCLUDE_TWRPAPP := true
 
 # Making the recovery.img smaller
 BOARD_HAS_NO_REAL_SDCARD := true
