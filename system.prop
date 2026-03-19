@@ -92,5 +92,6 @@ ro.system.build.version.sehi=3403
 ro.system.qb.id=104512075
 ro.vendor.cscsupported=1
 ro.vendor.qti.va_aosp.support=1
+ro.zram.mark_idle_delay_mins=60
 security.perf_harden=1
 sys.hqm.support=true
