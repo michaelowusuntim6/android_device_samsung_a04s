@@ -57,7 +57,7 @@ BOARD_BOOTIMG_HEADER_VERSION := 2
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 BOARD_KERNEL_IMAGE_NAME := Image.gz
-TARGET_KERNEL_CONFIG := exynos850-a04snsxx_defconfig 
+TARGET_KERNEL_CONFIG := exynos850-a04sxx_defconfig 
 BOARD_KERNEL_SEPARATED_DTBO := true
 
 # CMDLINE (Optimized for crDroid/Android 14)
@@ -83,6 +83,17 @@ TARGET_SOC := universal3830
 
 # Inclusion of SoC-specific configurations (Critical for Exynos 850)
 include hardware/samsung_slsi-linaro/config/BoardConfig850.mk
+
+# --- Verified Performance & Efficiency ---
+# Enables Kernel Freezer (Verified: CONFIG_CGROUP_FREEZER=y)
+BOARD_KERNEL_CMDLINE += activity_manager_native_boot.use_freezer=true
+
+# Force ZRAM to use LZ4 (Verified: CONFIG_LZ4_COMPRESS=y)
+BOARD_KERNEL_CMDLINE += zram.backend=lz4
+
+# Samsung Specifics - Disable prelauncher to save RAM
+PRODUCT_PROPERTY_OVERRIDES += \
+    com.samsung.speg.prelauncher.disable=true
 
 # Properties
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
