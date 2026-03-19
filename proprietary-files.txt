@@ -346,7 +346,7 @@ system/bin/charon
 system/lib/vendor.samsung.frameworks.security.ucm.crypto@1.0.so
 system/lib64/libcharon.so
 system/lib64/libstrongswan.so
-sysrem/lib64/libucsengine.system.so
+system/lib64/libucsengine.system.so
 system/lib64/vendor.samsung.frameworks.security.ucm.crypto@1.0.so
 
 # RenderScript
