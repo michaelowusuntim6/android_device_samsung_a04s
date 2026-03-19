@@ -1,31 +1,28 @@
-# Inherit from those products. Most specific first.
+# Inherit from generic products
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 
-# Inherit from a04s device configuration
+## Inherit from YOUR A04s device tree
 $(call inherit-product, device/samsung/a04s/device.mk)
 
-# Inherit common Lineage/Rising stuff
+## Boot Animation (A04s resolution)
+TARGET_SCREEN_HEIGHT := 1600
+TARGET_SCREEN_WIDTH := 720
+
+## Inherit common crDroid/Lineage stuff
+# NOTE: Use the path we verified exists in your vendor folder
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
-# RisingOS Specific Flags
-RISING_MAINTAINER := Mike
-WITH_GMS := true
-TARGET_CORE_GMS := true
-TARGET_USES_PICO_GAPPS := true
-TARGET_ENABLE_BLUR := false  # Set to false for 3GB RAM performance
-
-# Device Identity
+## Device identifier (MUST match your lunch target)
 PRODUCT_DEVICE := a04s
-PRODUCT_NAME := lineage_a04s
+PRODUCT_NAME := crdroid_a04s
 PRODUCT_BRAND := samsung
 PRODUCT_MODEL := SM-A047F
 PRODUCT_MANUFACTURER := samsung
 
-PRODUCT_GMS_CLIENTID_BASE := android-samsung-ss
+# Setting this correctly helps with camera and media blobs
+PRODUCT_SHIPPING_API_LEVEL := 31
 
-# Build Properties
-PRODUCT_BUILD_PROP_OVERRIDES += \
-    RisingChipset="Exynos 850" \
-    RisingMaintainer="Mike" \
-    BuildDesc="a04snnxx-user 14 UP1A.231005.007 A047FXXSDEYL1 release-keys"
+PRODUCT_GMS_CLIENTID_BASE := android-samsung
