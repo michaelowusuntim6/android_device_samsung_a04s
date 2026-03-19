@@ -32,14 +32,14 @@ wifi.interface=wlan0
 ro.vendor.epdg.support=true
 ro.vendor.sec.radio.def_network=9
 
-# Dalvik VM (Optimized for 3GB RAM)
+# Dalvik VM (Optimized for iPhone-style Efficiency)
 dalvik.vm.dex2oat64.enabled=true
 dalvik.vm.heapgrowthlimit=192m
-dalvik.vm.heapmaxfree=8m
-dalvik.vm.heapminfree=512k
+dalvik.vm.heapmaxfree=16m
+dalvik.vm.heapminfree=2m
 dalvik.vm.heapsize=512m
-dalvik.vm.heapstartsize=8m
-dalvik.vm.heaptargetutilization=0.75
+dalvik.vm.heapstartsize=16m
+dalvik.vm.heaptargetutilization=0.85
 persist.sys.dalvik.vm.lib.2=libart.so
 
 # Hardware Identity
