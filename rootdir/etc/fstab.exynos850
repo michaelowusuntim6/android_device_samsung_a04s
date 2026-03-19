@@ -15,5 +15,5 @@ odm                                             /odm                  erofs     
 /devices/platform/13500000.dwmmc2/mmc_host* auto                  auto      default          voldmanaged=sdcard:auto
 /devices/platform/13600000.usb* auto                  vfat      default          voldmanaged=usb:auto
 
-# zRAM Logic - Optimized for 3GB RAM / Exynos 850 (All 8 Cores utilized)
+# zRAM Logic - Optimized for 3GB RAM / Exynos 850
 /dev/block/zram0                                none                  swap      defaults         zramsize=2147483648,max_comp_streams=6
