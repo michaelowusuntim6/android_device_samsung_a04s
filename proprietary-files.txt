@@ -86,8 +86,8 @@ vendor/lib64/libvibratorutils.so
 vendor/lib64/spatializer-aidl-cpp.so
 
 # Audio configs
-etc/audio_effects.xml
-etc/audio_effects_common.conf
+system/etc/audio_effects.xml
+system/etc/audio_effects_common.conf
 vendor/etc/a2dpsink_audio_policy_configuration.xml
 vendor/etc/audio_effects.xml
 vendor/etc/audio_effects_sec.xml
@@ -257,30 +257,30 @@ vendor/lib/hw/local_time.default.so
 vendor/lib64/hw/local_time.default.so
 
 # Media
-etc/seccomp_policy/mediacodec.policy
-lib/libdatasource.so
-lib/libdatasource_local_cache.so
-lib/libhdcp2.so
-lib/libhdcp_client_aidl.so
-lib/libmedia_codeclist.so
-lib/libomafldrm.so
-lib/libstagefright_aidl_bufferpool2.so
-lib/libstagefright_bufferpool@2.0.1.so
-lib/libstagefright_codecbase.so
-lib/libstagefright_framecapture_utils.so
-lib/libstagefright_hdcp.so
-lib/libstagefright_httplive_sec.so
-lib/libstagefright_surface_utils.so
-lib/vendor.samsung.hardware.security.hdcp.wifidisplay-V2-ndk.so
-lib64/libdatasource.so
-lib64/libdatasource_local_cache.so
-lib64/libmedia_codeclist.so
-lib64/libomafldrm.so
-lib64/libstagefright_aidl_bufferpool2.so
-lib64/libstagefright_bufferpool@2.0.1.so
-lib64/libstagefright_codecbase.so
-lib64/libstagefright_framecapture_utils.so
-lib64/libstagefright_surface_utils.so
+system/etc/seccomp_policy/mediacodec.policy
+system/lib/libdatasource.so
+system/lib/libdatasource_local_cache.so
+system/lib/libhdcp2.so
+system/lib/libhdcp_client_aidl.so
+system/lib/libmedia_codeclist.so
+system/lib/libomafldrm.so
+system/lib/libstagefright_aidl_bufferpool2.so
+system/lib/libstagefright_bufferpool@2.0.1.so
+system/lib/libstagefright_codecbase.so
+system/lib/libstagefright_framecapture_utils.so
+system/lib/libstagefright_hdcp.so
+system/lib/libstagefright_httplive_sec.so
+system/lib/libstagefright_surface_utils.so
+system/lib/vendor.samsung.hardware.security.hdcp.wifidisplay-V2-ndk.so
+system/lib64/libdatasource.so
+system/lib64/libdatasource_local_cache.so
+system/lib64/libmedia_codeclist.so
+system/lib64/libomafldrm.so
+system/lib64/libstagefright_aidl_bufferpool2.so
+system/lib64/libstagefright_bufferpool@2.0.1.so
+system/lib64/libstagefright_codecbase.so
+system/lib64/libstagefright_framecapture_utils.so
+system/lib64/libstagefright_surface_utils.so
 vendor/bin/hw/android.hardware.media.omx@1.0-service
 vendor/etc/init/android.hardware.media.omx@1.0-service.rc
 vendor/etc/seccomp_policy/mediacodec.policy
@@ -321,7 +321,7 @@ vendor/lib64/nfc_nci.st21nfc.st.so
 vendor/lib64/vendor.samsung.hardware.nfc_aidl-V1-ndk.so
 
 # NFC configs
-etc/libnfc-nci.conf
+system/etc/libnfc-nci.conf
 vendor/etc/nfc/st21nfc_conf.txt
 vendor/etc/libnfc-hal-st.conf
 
@@ -342,12 +342,12 @@ vendor/lib64/vendor.samsung.hardware.radio@2.1.so
 vendor/lib64/vendor.samsung.hardware.radio@2.2.so
 
 # Radio (IMS)
-bin/charon
-lib/vendor.samsung.frameworks.security.ucm.crypto@1.0.so
-lib64/libcharon.so
-lib64/libstrongswan.so
-lib64/libucsengine.system.so
-lib64/vendor.samsung.frameworks.security.ucm.crypto@1.0.so
+system/bin/charon
+system/lib/vendor.samsung.frameworks.security.ucm.crypto@1.0.so
+system/lib64/libcharon.so
+system/lib64/libstrongswan.so
+sysrem/lib64/libucsengine.system.so
+system/lib64/vendor.samsung.frameworks.security.ucm.crypto@1.0.so
 
 # RenderScript
 vendor/lib/hw/android.hardware.renderscript@1.0-impl.so
