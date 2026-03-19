@@ -25,9 +25,9 @@ dalvik.vm.madvise.artfile.size=4294967295
 dalvik.vm.madvise.odexfile.size=104857600
 dalvik.vm.madvise.vdexfile.size=104857600
 dalvik.vm.minidebuginfo=true
-dalvik.vm.usap_pool_enabled=false
+dalvik.vm.usap_pool_enabled=true
 dalvik.vm.usap_pool_refill_delay_ms=3000
-dalvik.vm.usap_pool_size_max=3
+dalvik.vm.usap_pool_size_max=2
 dalvik.vm.usap_pool_size_min=1
 dalvik.vm.usap_refill_threshold=1
 dalvik.vm.useartservice=true
@@ -94,4 +94,3 @@ ro.vendor.cscsupported=1
 ro.vendor.qti.va_aosp.support=1
 security.perf_harden=1
 sys.hqm.support=true
-
