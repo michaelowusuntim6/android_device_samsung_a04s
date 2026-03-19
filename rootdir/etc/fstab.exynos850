@@ -14,3 +14,6 @@ odm                                             /odm                  f2fs      
 /dev/block/by-name/misc                         /misc                 emmc      defaults         defaults,first_stage_mount
 /devices/platform/13500000.dwmmc2/mmc_host* auto                  auto      default          voldmanaged=sdcard:auto
 /devices/platform/13600000.usb* auto                  vfat      default          voldmanaged=usb:auto
+
+# zRAM Logic - Optimized for 3GB RAM / Exynos 850
+/dev/block/zram0                                none                  swap      defaults         zramsize=2147483648,max_comp_streams=6
