@@ -14,23 +14,28 @@ TARGET_CPU_VARIANT := cortex-a55
 TARGET_CPU_VARIANT_RUNTIME := cortex-a55
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv8-2a
+TARGET_2ND_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a55
 TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a55
 
+# 64-Bit Binder & SDK (Essential for Android 14+)
+TARGET_USES_64_BIT_BINDER := true
+TARGET_SUPPORTS_64_BIT_APPS := true
+TARGET_USES_64_BIT_SDK := true
+
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := exynos850
 TARGET_NO_BOOTLOADER := true
+BOARD_VENDOR := samsung
 
 # Display
 TARGET_SCREEN_DENSITY := 300
 
-# Kernel
+# Kernel Hardware Offsets
 BOARD_BOOT_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x10000000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850 androidboot.selinux=enforce loop.max_part=7
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_OFFSET := 0x00008000
 BOARD_RAMDISK_OFFSET := 0x01000000
@@ -39,13 +44,13 @@ BOARD_TAGS_OFFSET := 0x00000100
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 
-# Building from Source
+# Kernel Command Line (Permissive set for touchscreen debugging)
+BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850 androidboot.selinux=permissive loop.max_part=7
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
+
+# Building from Source (Optional)
 TARGET_KERNEL_CONFIG := a04s_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/a04s
-
-# Boot Image Arguments
-BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
-BOARD_MKBOOTIMG_ARGS += --dtb $(PRODUCT_OUT)/dtb.img
 
 # =====================================================
 # Treble & Partition Configuration
@@ -59,31 +64,32 @@ BOARD_USES_VENDORIMAGE := true
 BOARD_USES_PRODUCTIMAGE := true
 BOARD_USES_ODMIMAGE := true
 
-# File system types (Verified F2FS)
+# File system types
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := f2fs
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := f2fs
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := f2fs
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := f2fs
 
-# Partitions
+# Physical Partition Limits
 BOARD_FLASH_BLOCK_SIZE := 262144
 BOARD_BOOTIMAGE_PARTITION_SIZE := 46137344
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
 
-# Super Partition (Verified Raw Size)
+# Super Partition (Verified 6.8GB Structure)
 BOARD_SUPER_PARTITION_SIZE := 6845104128
 BOARD_SUPER_PARTITION_GROUPS := samsung_dynamic_partitions
 BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor product odm
 BOARD_SAMSUNG_DYNAMIC_PARTITIONS_SIZE := 6840909824
 
-# Reserved sizes for F2FS metadata and wiggle room
+# Reserved sizes for F2FS metadata stability
 BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 52428800
 BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE := 20971520
 BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE := 20971520
 BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE := 10485760
 
-# Platform
+# Platform / SoC
 TARGET_BOARD_PLATFORM := universal3830
+TARGET_SOC := universal3830
 
 # Properties
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
@@ -98,14 +104,12 @@ TARGET_VENDOR_DLKM_PROP += $(DEVICE_PATH)/vendor_dlkm.prop
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.exynos850
 TARGET_USERIMAGES_USE_F2FS := true
 
-# Security patch level
+# Security Patch & AVB
 VENDOR_SECURITY_PATCH := 2025-12-01
-
-# Verified Boot (AVB) - Dual VBMeta Setup
 BOARD_AVB_ENABLE := true
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
 
-# VBMeta System Configuration (Required for vbmeta_system.img)
+# VBMeta System Configuration
 BOARD_AVB_VBMETA_SYSTEM := system vendor product odm
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
@@ -115,5 +119,5 @@ BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
 # VINTF
 DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
 
-# Inherit the proprietary files
+# Proprietary Includes
 include vendor/samsung/a04s/BoardConfigVendor.mk
