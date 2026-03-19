@@ -13,7 +13,7 @@ PRODUCT_SHIPPING_API_LEVEL := 31
 PRODUCT_CHARACTERISTICS := phone
 
 # Optimized Dalvik (Tuned for 3GB RAM)
-$(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
+$(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 
 # Audio (Verified 32-bit and @6.0 blobs)
 PRODUCT_PACKAGES += \
