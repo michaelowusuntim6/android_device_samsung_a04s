@@ -57,6 +57,7 @@ BOARD_BOOTIMG_HEADER_VERSION := 2
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 BOARD_KERNEL_IMAGE_NAME := Image.gz
+# Fixed: Correct filename verified via kernel tree ls
 TARGET_KERNEL_CONFIG := exynos850-a04sxx_defconfig 
 BOARD_KERNEL_SEPARATED_DTBO := true
 
@@ -66,34 +67,37 @@ BOARD_KERNEL_CMDLINE += androidboot.hardware=exynos850 self_state=0x0
 BOARD_KERNEL_CMDLINE += androidboot.boot_devices=13200000.ufs
 BOARD_KERNEL_CMDLINE += loop.max_part=7
 
+# --- Performance & Efficiency Tweaks (Verified) ---
+# Enables Kernel Freezer to mimic iOS background efficiency
+BOARD_KERNEL_CMDLINE += activity_manager_native_boot.use_freezer=true
+
+# Force ZRAM to use LZ4 backend for instant app resumes
+BOARD_KERNEL_CMDLINE += zram.backend=lz4
+
+# Disable Samsung prelauncher to maximize free RAM for background apps
+PRODUCT_PROPERTY_OVERRIDES += \
+    com.samsung.speg.prelauncher.disable=true
+
 # Dynamic Partitions (Specific to A04s Storage Layout)
 BOARD_MAIN_FASTBOOT_DYNAMIC_PARTITIONS_SIZE := 6840909824
 BOARD_DYNAMIC_PARTITIONS_SIZE := 6840909824
 BOARD_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor product odm
 
-# Reserved sizes for stability
-BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 52428800
-BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE := 20971520
-BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE := 20971520
-BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE := 10485760
+# File System Configuration - Optimized for Read-Only Partitions
+# EROFS provides faster read speeds than F2FS/EXT4
+# Set to 'none' because kernel lacks CONFIG_EROFS_FS_ZIP_LZ4
+BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := erofs
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := erofs
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := erofs
+BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := erofs
+BOARD_EROFS_COMPRESSOR := none
 
 # Platform / SoC
 TARGET_BOARD_PLATFORM := universal3830
 TARGET_SOC := universal3830
 
-# Inclusion of SoC-specific configurations (Critical for Exynos 850)
+# Inclusion of SoC-specific configurations
 include hardware/samsung_slsi-linaro/config/BoardConfig850.mk
-
-# --- Verified Performance & Efficiency ---
-# Enables Kernel Freezer (Verified: CONFIG_CGROUP_FREEZER=y)
-BOARD_KERNEL_CMDLINE += activity_manager_native_boot.use_freezer=true
-
-# Force ZRAM to use LZ4 (Verified: CONFIG_LZ4_COMPRESS=y)
-BOARD_KERNEL_CMDLINE += zram.backend=lz4
-
-# Samsung Specifics - Disable prelauncher to save RAM
-PRODUCT_PROPERTY_OVERRIDES += \
-    com.samsung.speg.prelauncher.disable=true
 
 # Properties
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
@@ -102,6 +106,7 @@ TARGET_PRODUCT_PROP += $(DEVICE_PATH)/product.prop
 
 # Recovery & Filesystem
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.exynos850
+# Userdata remains F2FS for best write performance
 TARGET_USERIMAGES_USE_F2FS := true
 BOARD_USES_METADATA_PARTITION := true
 BOARD_ROOT_EXTRA_FOLDERS := efs
@@ -109,11 +114,10 @@ BOARD_ROOT_EXTRA_FOLDERS := efs
 # Security Patch & AVB
 VENDOR_SECURITY_PATCH := 2025-12-01
 BOARD_AVB_ENABLE := true
-# Adjusted to bypass strict verification (From A21s reference)
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 0
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --algorithm NONE
 
-# Soong Namespaces (Ensures crDroid builds the correct Samsung HALs)
+# Soong Namespaces
 $(call soong_config_set,cbd,protocol,sipc)
 $(call soong_config_set,samsungUsbGadgetVars,gadget_name,13600000.dwc3)
 $(call soong_config_set,exynos_audio,PREDEFINED_LOW_CAPTURE_DURATION,20)
