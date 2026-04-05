@@ -41,7 +41,7 @@ dalvik.vm.heapmaxfree=16m
 dalvik.vm.heapminfree=2m
 dalvik.vm.heapsize=512m
 dalvik.vm.heapstartsize=16m
-dalvik.vm.heaptargetutilization=0.85
+dalvik.vm.heaptargetutilization=0.8
 persist.sys.dalvik.vm.lib.2=libart.so
 
 # Hardware Identity

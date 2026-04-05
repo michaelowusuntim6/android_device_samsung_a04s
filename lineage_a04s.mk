@@ -8,11 +8,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 $(call inherit-product, device/samsung/a04s/device.mk)
 
 ## Inherit common Superior stuff
-$(call inherit-product, vendor/superior/config/common_full_phone.mk)
+$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 ## Device identifier
 PRODUCT_DEVICE := a04s
-PRODUCT_NAME := superior_a04s
+PRODUCT_NAME := lineage_a04s
 PRODUCT_BRAND := samsung
 PRODUCT_MODEL := SM-A047F
 PRODUCT_MANUFACTURER := samsung
@@ -33,5 +33,4 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
 
 # Gapps and Features
 WITH_GMS := true
-WITH_QS := true
 TARGET_SUPPORTS_GSUITE := true
