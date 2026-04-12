@@ -9,13 +9,13 @@ DEVICE_PATH := device/samsung/a04s
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT := cortex-a55
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-2a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := generic
+TARGET_2ND_CPU_VARIANT := cortex-a55
 
 # 64-Bit Binder & SDK (Essential for Android 14+)
 TARGET_SUPPORTS_64_BIT_APPS := true
@@ -33,7 +33,7 @@ TARGET_SCREEN_DENSITY := 300
 TARGET_USES_VULKAN := true
 TARGET_RECOVERY_PIXEL_FORMAT := ABGR_8888
 
-# Kernel Hardware Offsets (Verified via terminal: 4096 Pagesize)
+# Kernel Hardware Offsets
 BOARD_BOOT_HEADER_VERSION := 2
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x10000000
@@ -83,7 +83,15 @@ BOARD_USES_RECOVERY_AS_BOOT := true
 TARGET_BOARD_PLATFORM := universal3830
 TARGET_SOC := universal850
 
-# VINTF Manifests (Mandatory for Android 16 - Resolves PRODUCT_COPY_FILES error)
+# Hardware Headers - Exynos SLSI Display Fix
+TARGET_SPECIFIC_HEADER_PATH := \
+    hardware/samsung_slsi-linaro/exynos/libhdr-common-headers/include \
+    hardware/samsung_slsi-linaro/exynos/libhdr/include
+
+# Force enable the HDR interface in the display HAL
+COMMON_GLOBAL_CFLAGS += -DEXYNOS_DISPLAY_HDR_INTERFACE
+
+# VINTF Manifests (Keep all as requested)
 DEVICE_MANIFEST_FILE += \
     vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.cas-service.xml \
     vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.cas@1.2-service.xml \
@@ -129,7 +137,22 @@ BOARD_AVB_ENABLE := true
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 2
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --algorithm NONE
 
-# Soong Namespaces
+# --- [SOONG CONFIGURATION - INTEGRATED FIXES] ---
+SOONG_CONFIG_NAMESPACES += exynos_hwc
+SOONG_CONFIG_exynos_hwc := \
+    target_soc_base \
+    libhdr_header_version \
+    USE_HDR_INTERFACE
+
+# Folder paths (ls showed 'essi' exists)
+SOONG_CONFIG_exynos_hwc_target_soc_base := essi
+
+# Header module name (MUST match the Android.bp we just updated)
+SOONG_CONFIG_exynos_hwc_libhdr_header_version := exynos850
+
+# Flag for display logic
+SOONG_CONFIG_exynos_hwc_USE_HDR_INTERFACE := "true"
+
 $(call soong_config_set,cbd,protocol,sipc)
 $(call soong_config_set,samsungUsbGadgetVars,gadget_name,13600000.dwc3)
 $(call soong_config_set,exynos_audio,PREDEFINED_LOW_CAPTURE_DURATION,20)
