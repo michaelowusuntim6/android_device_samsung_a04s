@@ -7,7 +7,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 ## Inherit from YOUR A04s device tree
 $(call inherit-product, device/samsung/a04s/device.mk)
 
-## Inherit common Superior stuff
+## Inherit common Lineage stuff
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 ## Device identifier
@@ -33,4 +33,3 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
 
 # Gapps and Features
 WITH_GMS := true
-TARGET_SUPPORTS_GSUITE := true
