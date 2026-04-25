@@ -83,11 +83,6 @@ BOARD_USES_RECOVERY_AS_BOOT := true
 TARGET_BOARD_PLATFORM := universal3830
 TARGET_SOC := universal850
 
-# Hardware Headers - Exynos SLSI Display Fix
-TARGET_SPECIFIC_HEADER_PATH := \
-    hardware/samsung_slsi-linaro/exynos/libhdr-common-headers/include \
-    hardware/samsung_slsi-linaro/exynos/libhdr/include
-
 # Force enable the HDR interface in the display HAL
 COMMON_GLOBAL_CFLAGS += -DEXYNOS_DISPLAY_HDR_INTERFACE
 
@@ -155,7 +150,6 @@ SOONG_CONFIG_exynos_hwc_USE_HDR_INTERFACE := "true"
 
 $(call soong_config_set,cbd,protocol,sipc)
 $(call soong_config_set,samsungUsbGadgetVars,gadget_name,13600000.dwc3)
-$(call soong_config_set,exynos_audio,PREDEFINED_LOW_CAPTURE_DURATION,20)
 
 # Properties & Paths
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
