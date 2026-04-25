@@ -6,7 +6,6 @@
 # Inherit Platform Configs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
-$(call inherit-product, hardware/samsung_slsi-linaro/config/config.mk)
 
 # API Level & Characteristics
 PRODUCT_SHIPPING_API_LEVEL := 31
@@ -62,12 +61,7 @@ PRODUCT_COPY_FILES += \
 # Namespaces - Critical for Android 16 Soong Build
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
-    hardware/samsung \
-    hardware/samsung_slsi-linaro/interfaces \
-    hardware/samsung_slsi-linaro/exynos \
-    hardware/samsung_slsi-linaro/graphics \
-    hardware/samsung_slsi-linaro/exynos/libaudio/audiohal_comv1 \
-    hardware/samsung_slsi-linaro/exynos/cpboot_v3
+    hardware/samsung
 
 # Inherit proprietary vendor files
 $(call inherit-product, vendor/samsung/a04s/a04s-vendor.mk)
