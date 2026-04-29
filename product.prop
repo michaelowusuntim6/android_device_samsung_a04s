@@ -19,8 +19,6 @@ persist.bluetooth.bqr.min_interval_ms=0
 # Miscellaneous
 # Disabled Samsung Smart Switch to prevent Lineage SetupWizard crashes
 restore.feature.use_samsung_smart_switch_flow=0
-ro.product.cpu.pagesize.max=4096
-ro.setupwizard.mode=OPTIONAL
 ro.setupwizard.rotation_locked=false
 ro.setupwizard.wifi_on_exit=false
 

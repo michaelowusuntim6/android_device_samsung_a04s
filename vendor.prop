@@ -36,10 +36,8 @@ ro.vendor.sec.radio.def_network=9
 
 # Dalvik VM (Optimized for iPhone-style Efficiency)
 dalvik.vm.dex2oat64.enabled=true
-dalvik.vm.heapgrowthlimit=192m
 dalvik.vm.heapmaxfree=16m
 dalvik.vm.heapminfree=2m
-dalvik.vm.heapsize=512m
 dalvik.vm.heapstartsize=16m
 dalvik.vm.heaptargetutilization=0.8
 persist.sys.dalvik.vm.lib.2=libart.so
@@ -74,5 +72,4 @@ ro.recovery.usb.vid=18D1
 
 # Miscellaneous
 ro.incremental.enable=yes
-ro.control_privapp_permissions=enforce
 ro.crypto.volume.filenames_mode=aes-256-cts
