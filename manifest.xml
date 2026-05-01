@@ -15,6 +15,16 @@
         <fqname>@1.0::IBluetoothHci/default</fqname>
     </hal>
     <hal format="hidl">
+        <name>android.hardware.bluetooth.audio</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.1::IBluetoothAudioProvidersFactory/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.dumpstate</name>
+        <transport>hwbinder</transport>
+        <fqname>@1.1::IDumpstateDevice/default</fqname>
+    </hal>
+    <hal format="hidl">
         <name>android.hardware.gatekeeper</name>
         <transport>hwbinder</transport>
         <fqname>@1.0::IGatekeeper/default</fqname>
@@ -66,12 +76,27 @@
     <hal format="hidl">
         <name>android.hardware.sensors</name>
         <transport>hwbinder</transport>
-        <fqname>@1.0::ISensors/default</fqname>
+        <fqname>@2.0::ISensors/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.usb</name>
+        <transport>hwbinder</transport>
+        <fqname>@1.3::IUsb/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.samsung.hardware.audio</name>
         <transport>hwbinder</transport>
         <fqname>@1.0::ISehDevicesFactory/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.biometrics.face</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.0::ISehFace/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.biometrics.fingerprint</name>
+        <transport>hwbinder</transport>
+        <fqname>@3.0::ISehBiometricsFingerprint/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.samsung.hardware.bluetooth</name>
@@ -84,12 +109,18 @@
         <fqname>@2.1::ISehGnss/default</fqname>
     </hal>
     <hal format="aidl">
-        <name>vendor.samsung.hardware.keymint</name>
-        <fqname>ISehKeyMintExtension/default</fqname>
+        <name>vendor.samsung.hardware.health</name>
+        <fqname>ISehHealth/default</fqname>
     </hal>
     <hal format="aidl">
         <name>vendor.samsung.hardware.keymint</name>
+        <fqname>ISehKeyMintExtension/default</fqname>
         <fqname>ISehKeyMintFactory/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.light</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.0::ISehLight/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.samsung.hardware.miscpower</name>
@@ -97,9 +128,66 @@
         <fqname>@2.0::ISehMiscPower/default</fqname>
     </hal>
     <hal format="hidl">
+        <name>vendor.samsung.hardware.nfc</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.0::ISehNfc/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.power</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.0::ISehPower/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.radio</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.2::ISehRadio/slot1</fqname>
+        <fqname>@2.2::ISehRadio/slot2</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.security.drk</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.0::ISehDrk/default</fqname>
+    </hal>
+    <hal format="aidl">
+        <name>vendor.samsung.hardware.security.widevine.keyprov</name>
+        <fqname>ISehKeyProv/default</fqname>
+    </hal>
+    <hal format="aidl">
+        <name>vendor.samsung.hardware.snap</name>
+        <fqname>ISehSnap/default</fqname>
+    </hal>
+    <hal format="aidl">
+        <name>vendor.samsung.hardware.sysinput</name>
+        <fqname>ISehSysInput/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.thermal</name>
+        <transport>hwbinder</transport>
+        <fqname>@1.0::ISehThermal/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.tlc.iccc</name>
+        <transport>hwbinder</transport>
+        <fqname>@1.0::ISehIccc/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.tlc.kg</name>
+        <transport>hwbinder</transport>
+        <fqname>@1.1::ISehKg/default</fqname>
+    </hal>
+    <hal format="hidl">
         <name>vendor.samsung.hardware.tlc.ucm</name>
         <transport>hwbinder</transport>
         <fqname>@2.0::ISehUcm/default</fqname>
+    </hal>
+    <hal format="aidl">
+        <name>vendor.samsung.hardware.vibrator</name>
+        <fqname>ISehVibrator/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.samsung.hardware.wifi</name>
+        <transport>hwbinder</transport>
+        <fqname>@2.0::ISehWifi/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.samsung_slsi.hardware.ExynosHWCServiceTW</name>

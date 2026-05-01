@@ -1,27 +1,26 @@
 # <src>                                              <mnt_point>        <type>    <mnt_flags and options>                                                                                         <fs_mgr_flags>
-# Dynamic Partitions (Verified F2FS - No Slotselect for A04s)
-system                                               /                  f2fs      ro,barrier=1,noatime                                                                                            wait,logical,first_stage_mount,avb=vbmeta_system
-product                                              /product           f2fs      ro,barrier=1,noatime                                                                                            wait,logical,first_stage_mount,avb=vbmeta_system
-vendor                                               /vendor            f2fs      ro,barrier=1,noatime                                                                                            wait,logical,first_stage_mount,avb
-odm                                                  /odm               f2fs      ro,barrier=1,noatime                                                                                            wait,logical,first_stage_mount,avb
+
+# Logical Partitions (Dynamic)
+system                                               /system            ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb=vbmeta_system
+vendor                                               /vendor            ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb
+product                                              /product           ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb=vbmeta_system
+odm                                                  /odm               ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb
 
 # Core Physical Partitions
-/dev/block/by-name/metadata                          /metadata          ext4      noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic,sync                    wait,first_stage_mount,formattable,check
+/dev/block/by-name/metadata                          /metadata          ext4      noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic                         wait,first_stage_mount,formattable,check
+/dev/block/by-name/boot                                 /boot                   emmc    defaults                                                                                recoveryonly
+/dev/block/by-name/recovery                             /recovery               emmc    defaults                                                                                recoveryonly
+/dev/block/by-name/vbmeta                               /vbmeta                 emmc    defaults                                                                                first_stage_mount
 /dev/block/by-name/cache                             /cache             ext4      noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic                         wait,check
-/dev/block/by-name/userdata                          /data              f2fs      noatime,nosuid,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678,whint_mode=fs-based,inlinecrypt    latemount,wait,check,quota,reservedsize=128M,fileencryption=aes-256-xts:aes-256-cts:v2,metadata_encryption=aes-256-xts,keydirectory=/metadata/vold/metadata_encryption,checkpoint=fs,fsverity
+/dev/block/by-name/userdata                          /data              f2fs      noatime,nosuid,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678              latemount,wait,check,quota,reservedsize=128M,fileencryption=aes-256-xts:aes-256-cts:v2,metadata_encryption=aes-256-xts,keydirectory=/metadata/vold/metadata_encryption,checkpoint=fs
 
-# Samsung Radio / EFS
+# Samsung Specifics
 /dev/block/by-name/efs                               /mnt/vendor/efs    ext4      noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic                         wait,check
-/dev/block/by-name/cpefs                             /mnt/vendor/cpefs  ext4      noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic                         wait,check,nofail
-/dev/block/by-name/misc                              /misc              emmc      defaults                                                                                                        defaults,first_stage_mount
+/dev/block/by-name/misc                              /misc              emmc      defaults                                                                                                        defaults
 
-# Samsung Proprietary
-/dev/block/by-name/prism                             /prism             f2fs      ro,barrier=1                                                                                                    nofail,avb,first_stage_mount
-/dev/block/by-name/optics                            /optics            f2fs      ro,barrier=1                                                                                                    nofail,avb,first_stage_mount
-
-# Removable Storage
+# Removable Storage (A04s Hardware Address)
 /devices/platform/12110000.dwmmc2/mmc_host* auto               auto      defaults                                                                                                        voldmanaged=sdcard:auto
-/devices/platform/13600000.usb* auto               vfat      defaults                                                                                                        voldmanaged=usb:auto
+/devices/platform/13600000.usb* auto               auto      defaults                                                                                                        voldmanaged=usb:auto
 
-# zRAM - Optimized for Exynos 850 (2GB)
-/dev/block/zram0                                     none               swap      defaults                                                                                                        zramsize=2147483648,max_comp_streams=6
+# zRAM (2GB)
+/dev/block/zram0                                     none               swap      defaults                                                                                                        zramsize=2147483648

@@ -21,16 +21,12 @@ $(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
 # Audio - Aligned to universal3830 (AIDL)
 PRODUCT_PACKAGES += \
     android.hardware.audio.service \
-    audio.primary.universal3830 \
     audio.bluetooth.default \
     audio.r_submix.default \
     audio.usb.default
 
 # Graphics & Display - Aligned to universal3830
 PRODUCT_PACKAGES += \
-    android.hardware.graphics.allocator@4.0-service \
-    android.hardware.graphics.mapper@4.0-impl \
-    hwcomposer.universal3830 \
     gralloc.default
 
 # Connectivity - WiFi & NFC
@@ -39,19 +35,15 @@ PRODUCT_PACKAGES += \
     com.android.nfc_extras \
     Tag \
     android.hardware.bluetooth-service.default \
-    android.hardware.wifi-service \
-    wpa_supplicant \
-    cbd
+    android.hardware.wifi-service
 
-# Biometrics & Vibrator
-PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint-service.samsung \
-    android.hardware.vibrator-service.samsung
 
 # Rootdir Scripts
 PRODUCT_PACKAGES += \
     gps.sh \
     mx_logger.sh
+
+PRODUCT_PACKAGES := $(filter-out FMRadio FM2 FMService, $(PRODUCT_PACKAGES))
 
 # ===========================================================================
 # VENDOR PREBUILT MODULES (defined in Android.mk — all 282 modules)
@@ -360,10 +352,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.exynos850:$(TARGET_COPY_OUT_RAMDISK)/fstab.universal3830 \
     $(LOCAL_PATH)/rootdir/etc/fstab.exynos850:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.universal3830
 
-# Namespaces - Critical for Android 16 Soong Build
+# Namespaces - Critical for Android 14+ Soong Build
 PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH) \
-    hardware/samsung
+    $(LOCAL_PATH)
 
 # Inherit proprietary vendor files
 $(call inherit-product, vendor/samsung/a04s/a04s-vendor.mk)

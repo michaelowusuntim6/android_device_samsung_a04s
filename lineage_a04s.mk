@@ -7,24 +7,21 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 ## Inherit from YOUR A04s device tree
 $(call inherit-product, device/samsung/a04s/device.mk)
 
-## Inherit common Afterlife stuff
-$(call inherit-product, vendor/afterlife/config/common_full_phone.mk)
+## Inherit common Lineage stuff
+$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 ## Device identifier
 PRODUCT_DEVICE := a04s
-PRODUCT_NAME := afterlife_a04s
+PRODUCT_NAME := lineage_a04s
 PRODUCT_BRAND := samsung
 PRODUCT_MODEL := SM-A047F
 PRODUCT_MANUFACTURER := samsung
 
 # GApps Configuration
-AFTERLIFE_GAPPS := true
-GAPPS_CORE := true
+WITH_GMS := true
 
-AFTERLIFE_MAINTAINER := Michael Owusu Ntim
-
-TARGET_CALL_RECORDING_SUPPORTED := false
-
+# Tell the build to actually use LZ4 for the ramdisk packaging
+PRODUCT_COMPRESSED_RAMDISK := lz4
 
 # Boot Animation Resolution (720x1600)
 TARGET_BOOT_ANIMATION_RES := 720

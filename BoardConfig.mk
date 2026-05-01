@@ -21,6 +21,10 @@ TARGET_2ND_CPU_VARIANT := cortex-a55
 TARGET_SUPPORTS_64_BIT_APPS := true
 TARGET_USES_64_BIT_SDK := true
 
+# Build Broken Rules (Replicated from A21s common for stability)
+BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := exynos850
 TARGET_NO_BOOTLOADER := true
@@ -44,13 +48,26 @@ BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_INCLUDE_RECOVERY_DTBO := true
 BOARD_KERNEL_SEPARATED_DTBO := true
-BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+BOARD_INCLUDE_DTB_IN_BOOTIMG := false
+
+# Partition Sizes (Verified from hardware blocks)
+BOARD_BOOTIMAGE_PARTITION_SIZE := 46137344
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 55574528
+BOARD_DTBOIMG_PARTITION_SIZE := 8388608
+
+# Compression - Switch to LZ4 to save space
+BOARD_RAMDISK_USE_LZ4 := true
+
+# Recovery Configuration
+# This stops the 34MB kernel from overflowing the boot partition
+BOARD_USES_RECOVERY_AS_BOOT := false
+TARGET_NO_RECOVERY := false
 
 # Kernel Build Configuration (Using Prebuilts)
 BOARD_KERNEL_IMAGE_NAME := kernel
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
-BOARD_PREBUILT_DTBIMAGE_DIR := $(DEVICE_PATH)/prebuilt
+BOARD_PREBUILT_DTBIMAGE := $(DEVICE_PATH)/prebuilt/dtb
 
 # CMDLINE (Verified: 12100000.dwmmc0 for eMMC)
 BOARD_KERNEL_CMDLINE := console=ttySAC2,115200n8 androidboot.console=ttySAC2 printk.devkmsg=on
@@ -61,37 +78,52 @@ BOARD_KERNEL_CMDLINE += activity_manager_native_boot.use_freezer=true
 BOARD_KERNEL_CMDLINE += zram.backend=lz4
 
 # --- [PARTITION PATH DEFINITIONS] ---
-TARGET_COPY_OUT_SYSTEM := system
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_PRODUCT := product
 TARGET_COPY_OUT_ODM := odm
 
-# --- [DYNAMIC PARTITIONS CONFIGURATION] ---
-BOARD_MAIN_FASTBOOT_DYNAMIC_PARTITIONS_SIZE := 6840909824
-BOARD_DYNAMIC_PARTITIONS_SIZE := 6840909824
-BOARD_DYNAMIC_PARTITIONS_PARTITION_LIST := system product vendor odm
+# Force separate partition building
+BOARD_USES_VENDORIMAGE := true
+BOARD_USES_PRODUCTIMAGE := true
+BOARD_USES_ODMIMAGE := true
 
-# --- [FILE SYSTEM CONFIGURATION] ---
-BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := f2fs
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := f2fs
-BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := f2fs
-BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := f2fs
+# --- [DYNAMIC PARTITIONS CONFIGURATION] ---
+# Restructured into Groups to match Exynos 850 standards
+BOARD_SUPER_PARTITION_SIZE := 6635388928
+BOARD_SUPER_PARTITION_GROUPS := samsung_dynamic_partitions
+BOARD_SAMSUNG_DYNAMIC_PARTITIONS_SIZE := 6631194624 # (Total size minus 4MB overhead)
+BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST := system product vendor odm
+
+BOARD_USES_METADATA_PARTITION := true
+
+# Individual Logical Partition Sizes (Verified via blockdev)
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4231294976
+BOARD_VENDORIMAGE_PARTITION_SIZE := 537047040
+BOARD_PRODUCTIMAGE_PARTITION_SIZE := 1640783872
+BOARD_ODMIMAGE_PARTITION_SIZE := 21389312
+BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
+BOARD_METADATA_PARTITION_SIZE := 33554432
+
+-include vendor/lineage/config/BoardConfigReservedSize.mk
+
+BOARD_USES_FULL_RECOVERY_IMAGE := true
+
+BOARD_EXT4_SHARE_DUP_BLOCKS := false
+
+# Filesystem Configuration
+BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_USERIMAGES_USE_F2FS := true
 
-# --- [INDIVIDUAL PARTITION SIZES] ---
-# Values are multiples of 4096 for F2FS alignment
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4294967296
-BOARD_VENDORIMAGE_PARTITION_SIZE := 536870912
-BOARD_PRODUCTIMAGE_PARTITION_SIZE := 1610612736
-BOARD_ODMIMAGE_PARTITION_SIZE := 104857600
+# A/B Logic
+AB_OTA_UPDATER := false
 
-# F2FS Reserved Size (Prevents partition size calculation crashes)
-BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 20971520
-BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE := 10485760
-BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE := 10485760
-BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE := 5242880
-
-BOARD_USES_RECOVERY_AS_BOOT := true
+# Samsung Specifics
+ENABLE_VENDOR_RIL_SERVICE := true
+BOARD_ROOT_EXTRA_FOLDERS := efs
 
 # Platform / SoC
 TARGET_BOARD_PLATFORM := universal3830
@@ -100,51 +132,22 @@ TARGET_SOC := universal850
 # Force enable the HDR interface in the display HAL
 COMMON_GLOBAL_CFLAGS += -DEXYNOS_DISPLAY_HDR_INTERFACE
 
-# VINTF Manifests (Keep all as requested)
-DEVICE_MANIFEST_FILE += \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.cas-service.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.cas@1.2-service.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.sensors@2.0-multihal.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.usb@1.3-service.coral.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/android.hardware.wifi.supplicant.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/bluetooth_audio.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/deviceManifest.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/dumpstate-default.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/engmode_manifest.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/face-default-sec.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/hyper-default-sec.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/lights-default-sec.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/manifest_android.hardware.drm@1.4-service.clearkey.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/manifest_android.hardware.drm@1.4-service.widevine.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/memtrack.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/nfc-service-st.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/power-samsung.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/sec_c2_manifest_default_1_0.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vaultkeeper_manifest.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.biometrics.fingerprint@3.0-service.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.health-service.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.radio.exclude.slsi.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.radio_manifest_2_31.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.security.drk@2.0.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.security.fkeymaster-service.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.security.hdcp.wifidisplay-default.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.security.widevine.keyprov-service.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.sehradio_manifest_2_31.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.snap-default.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.sysinput-default.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.thermal-default.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.tlc.iccc@1.0-manifest.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.tlc.kg@1.1-manifest.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.vibrator-default.xml \
-    vendor/samsung/a04s/proprietary/vendor/etc/vintf/manifest/vendor.samsung.hardware.wifi-service.xml
+# VINTF Manifests (Consolidated to Device Tree)
+DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
+
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := $(DEVICE_PATH)/framework_compatibility_matrix.xml
 
 # Security Patch & AVB
 VENDOR_SECURITY_PATCH := 2025-12-01
 BOARD_AVB_ENABLE := true
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 2
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --algorithm NONE
+
+# AVB Signing Configuration
+BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
+BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 
 # --- [SOONG CONFIGURATION - INTEGRATED FIXES] ---
 SOONG_CONFIG_NAMESPACES += exynos_hwc
@@ -156,13 +159,12 @@ SOONG_CONFIG_exynos_hwc := \
 # Folder paths (ls showed 'essi' exists)
 SOONG_CONFIG_exynos_hwc_target_soc_base := essi
 
-# Header module name (MUST match the Android.bp we just updated)
+# Header module name
 SOONG_CONFIG_exynos_hwc_libhdr_header_version := exynos850
 
 # Flag for display logic
 SOONG_CONFIG_exynos_hwc_USE_HDR_INTERFACE := "true"
 
-$(call soong_config_set,cbd,protocol,sipc)
 $(call soong_config_set,samsungUsbGadgetVars,gadget_name,13600000.dwc3)
 
 # Properties & Paths
@@ -170,8 +172,6 @@ TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 TARGET_PRODUCT_PROP += $(DEVICE_PATH)/product.prop
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.exynos850
-BOARD_USES_METADATA_PARTITION := true
-BOARD_ROOT_EXTRA_FOLDERS := efs
 
 # Inherit from proprietary vendor configs
 -include vendor/samsung/a04s/BoardConfigVendor.mk
