@@ -108,7 +108,7 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
 BOARD_METADATA_PARTITION_SIZE := 33554432
 
 -include vendor/lineage/config/BoardConfigReservedSize.mk
-
+include hardware/samsung_slsi-linaro/config/BoardConfig850.mk
 BOARD_USES_FULL_RECOVERY_IMAGE := true
 
 BOARD_EXT4_SHARE_DUP_BLOCKS := false
