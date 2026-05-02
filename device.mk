@@ -16,7 +16,7 @@ TARGET_SCREEN_HEIGHT := 1600
 TARGET_SCREEN_WIDTH := 720
 
 # Optimized Dalvik (Verified for 3GB/4GB RAM)
-$(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
+$(call inherit-product, frameworks/native/build/phone-xhdpi-4096-dalvik-heap.mk)
 
 # Audio - Aligned to universal3830 (AIDL)
 PRODUCT_PACKAGES += \
