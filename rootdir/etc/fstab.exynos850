@@ -1,7 +1,7 @@
 # <src>                                              <mnt_point>        <type>    <mnt_flags and options>                                                                                         <fs_mgr_flags>
 
 # Logical Partitions (Dynamic)
-system                                               /            ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb=vbmeta_system
+system                                               /system            ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb=vbmeta_system
 vendor                                               /vendor            ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb
 product                                              /product           ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb=vbmeta_system
 odm                                                  /odm               ext4      ro,barrier=1                                                                                                    wait,logical,first_stage_mount,avb

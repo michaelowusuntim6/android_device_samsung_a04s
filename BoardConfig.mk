@@ -21,6 +21,31 @@ TARGET_2ND_CPU_VARIANT := cortex-a55
 TARGET_SUPPORTS_64_BIT_APPS := true
 TARGET_USES_64_BIT_SDK := true
 
+# --- [HARDWARE RENDERING & MEMORY] ---
+# These must come BEFORE the Linaro include
+BOARD_USES_EXYNOS_LIBION := true
+BOARD_USES_EXYNOS_ACRYL := true
+BOARD_USES_EXYNOS_GRAPHICBUFFER := true
+BOARD_USES_EXYNOS_LIBACRYL := true
+
+# Verified from phone hardware (lshal)
+BOARD_USES_EXYNOS_GRALLOC_VERSION := 4
+
+# Bridge Soong to Kati for OMX
+BUILD_BROKEN_MISSING_DEPENDENCIES := true
+
+# Export these specifically to the global link path
+COMMON_GLOBAL_CFLAGS += -DEXYNOS_LIBION_HEADER
+
+# Ensure the build system knows where to find the headers for these 'missing' libs
+TARGET_SPECIFIC_HEADER_PATH := hardware/samsung_slsi-linaro/include
+
+# Allow the legacy linker to see these libraries
+BOARD_VNDK_VERSION := current
+
+# Now include the common config
+include hardware/samsung_slsi-linaro/config/BoardConfig850.mk
+
 # Build Broken Rules (Replicated from A21s common for stability)
 BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
@@ -30,15 +55,13 @@ TARGET_BOOTLOADER_BOARD_NAME := exynos850
 TARGET_NO_BOOTLOADER := true
 BOARD_VENDOR := samsung
 
-TARGET_KERNEL_MIXED_MODE := false
-
 # Display & Graphics
 TARGET_SCREEN_DENSITY := 300
 TARGET_USES_VULKAN := true
 TARGET_RECOVERY_PIXEL_FORMAT := ABGR_8888
 
-# Kernel Hardware Offsets & Packing
-BOARD_BOOT_HEADER_VERSION := 2
+# --- [KERNEL HARDWARE & PREBUILT CONFIGURATION] ---
+# Offsets and Header Version (Standard Exynos 850)
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
@@ -46,9 +69,30 @@ BOARD_KERNEL_OFFSET := 0x00008000
 BOARD_RAMDISK_OFFSET := 0x01000000
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_FLASH_BLOCK_SIZE := 131072
-BOARD_INCLUDE_RECOVERY_DTBO := true
 BOARD_KERNEL_SEPARATED_DTBO := true
-BOARD_INCLUDE_DTB_IN_BOOTIMG := false
+
+# Kernel Binary
+TARGET_NO_KERNEL := false
+BOARD_KERNEL_IMAGE_NAME := kernel
+TARGET_PREBUILT_KERNEL := device/samsung/a04s/prebuilt/kernel
+
+# Boot Partition DTB (Direct Pointing)
+# TARGET_PREBUILT_DTB is the rule that fixes the "missing dtb.img" Ninja error
+TARGET_PREBUILT_DTB := device/samsung/a04s/prebuilt/boot/dtb.img
+BOARD_PREBUILT_DTBIMAGE := device/samsung/a04s/prebuilt/boot/dtb.img
+BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+BOARD_PREBUILT_DTBIMAGE_DIR := device/samsung/a04s/prebuilt/boot
+
+# Recovery Partition Binaries (Direct Pointing)
+BOARD_INCLUDE_RECOVERY_DTBO := true
+BOARD_RECOVERY_DTBOIMAGE := device/samsung/a04s/prebuilt/recovery/dtbo.img
+BOARD_CUSTOM_DTBIMG := device/samsung/a04s/prebuilt/recovery/dtb.img
+
+# General DTBO pointer (Points to the one extracted from recovery)
+BOARD_PREBUILT_DTBOIMAGE := device/samsung/a04s/prebuilt/recovery/dtbo.img
+
+# Storage and Flags
+BOARD_HAS_REMOVABLE_STORAGE := true
 
 # Partition Sizes (Verified from hardware blocks)
 BOARD_BOOTIMAGE_PARTITION_SIZE := 46137344
@@ -63,12 +107,6 @@ BOARD_RAMDISK_USE_LZ4 := true
 BOARD_USES_RECOVERY_AS_BOOT := false
 TARGET_NO_RECOVERY := false
 
-# Kernel Build Configuration (Using Prebuilts)
-BOARD_KERNEL_IMAGE_NAME := kernel
-TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
-BOARD_PREBUILT_DTBIMAGE := $(DEVICE_PATH)/prebuilt/dtb
-
 # CMDLINE (Verified: 12100000.dwmmc0 for eMMC)
 BOARD_KERNEL_CMDLINE := console=ttySAC2,115200n8 androidboot.console=ttySAC2 printk.devkmsg=on
 BOARD_KERNEL_CMDLINE += androidboot.hardware=exynos850 self_state=0x0
@@ -76,6 +114,7 @@ BOARD_KERNEL_CMDLINE += androidboot.boot_devices=12100000.dwmmc0
 BOARD_KERNEL_CMDLINE += loop.max_part=7
 BOARD_KERNEL_CMDLINE += activity_manager_native_boot.use_freezer=true
 BOARD_KERNEL_CMDLINE += zram.backend=lz4
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 
 # --- [PARTITION PATH DEFINITIONS] ---
 TARGET_COPY_OUT_VENDOR := vendor
@@ -96,11 +135,17 @@ BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST := system product vendor odm
 
 BOARD_USES_METADATA_PARTITION := true
 
-# Enable System-as-Root
-BOARD_HAS_SYSTEM_ROOT_IMAGE := true
+# --- [DYNAMIC PARTITION SIZES] ---
+# Sizes are rounded down to the nearest 4096-byte multiple for alignment
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4299161600
+BOARD_PRODUCTIMAGE_PARTITION_SIZE := 1610612736
+BOARD_VENDORIMAGE_PARTITION_SIZE := 537042944
+BOARD_ODMIMAGE_PARTITION_SIZE := 21385216
+BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
 
 -include vendor/lineage/config/BoardConfigReservedSize.mk
-include hardware/samsung_slsi-linaro/config/BoardConfig850.mk
+
+
 BOARD_USES_FULL_RECOVERY_IMAGE := true
 
 BOARD_EXT4_SHARE_DUP_BLOCKS := false
@@ -121,8 +166,8 @@ ENABLE_VENDOR_RIL_SERVICE := true
 BOARD_ROOT_EXTRA_FOLDERS := efs
 
 # Platform / SoC
-TARGET_BOARD_PLATFORM := universal3830
-TARGET_SOC := universal850
+TARGET_BOARD_PLATFORM := exynos3830
+TARGET_SOC := exynos3830
 
 # Force enable the HDR interface in the display HAL
 COMMON_GLOBAL_CFLAGS += -DEXYNOS_DISPLAY_HDR_INTERFACE
@@ -167,6 +212,7 @@ TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 TARGET_PRODUCT_PROP += $(DEVICE_PATH)/product.prop
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.exynos850
+
 
 # Inherit from proprietary vendor configs
 -include vendor/samsung/a04s/BoardConfigVendor.mk

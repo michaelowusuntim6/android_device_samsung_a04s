@@ -25,6 +25,12 @@ PRODUCT_PACKAGES += \
     audio.r_submix.default \
     audio.usb.default
 
+PRODUCT_SOONG_NAMESPACES += \
+    hardware/samsung_slsi-linaro \
+    hardware/samsung_slsi-linaro/graphics \
+    hardware/samsung_slsi-linaro/exynos \
+    hardware/samsung_slsi-linaro/openmax
+
 # Graphics & Display - Aligned to universal3830
 PRODUCT_PACKAGES += \
     gralloc.default
@@ -66,7 +72,6 @@ PRODUCT_PACKAGES += \
     libHpr_RecGAE_cvFeature_v1.0.camera.samsung \
     libLocalTM_capture_core.camera.samsung \
     libLocalTM_wrapper.camera.samsung \
-    libOMX.Exynos.HEVC.Encoder \
     libOpenCv.camera.samsung \
     libSEF.quram \
     lib_SoundAlive_3DPosition_ver202 \
@@ -81,10 +86,7 @@ PRODUCT_PACKAGES += \
     libbt-vendor-samsung \
     libegis_fp_normal_sensor_test \
     libeis_core \
-    libepicoperator \
     libexifa.camera.samsung \
-    libexynoscamera_plugin \
-    libexynoscamera_plugin_utils \
     libexynoscamera_tdnr_plugin \
     libface_landmark_lite.arcsoft \
     libfloatingfeature \
@@ -114,7 +116,6 @@ PRODUCT_PACKAGES += \
     libsecfr_engine \
     libsecfr_model \
     libsecnativefeature \
-    libsecril-client \
     libsehbluetooth_audio_session_aidl \
     libsemnativecarrierfeature \
     libsimba.media.samsung \
@@ -297,8 +298,6 @@ PRODUCT_PACKAGES += \
     fsdbg_vendor \
     gpsd \
     iod \
-    macloader \
-    main_abox \
     mfgloader \
     samsung.hardware.media.c2@1.1-default-service \
     samsung.software.media.c2@1.0-service \
@@ -346,6 +345,10 @@ PRODUCT_PACKAGES += \
 # ===========================================================================
 # END OF VENDOR PREBUILTS
 # ===========================================================================
+
+# Force the DTB to be copied to the output folder
+PRODUCT_COPY_FILES += \
+    device/samsung/a04s/prebuilt/boot/dtb.img:$(PRODUCT_OUT)/dtb.img
 
 # Corrected Copy Paths (fstab matching BoardConfig platform name)
 PRODUCT_COPY_FILES += \
