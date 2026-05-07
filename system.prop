@@ -1,0 +1,26 @@
+# Audio
+ro.audio.spatializer_enabled=true
+
+# Radio
+persist.radio.sib16_support=1
+
+# Wi-Fi
+ro.wifi.channels=
+
+# SurfaceFlinger
+ro.surface_flinger.enable_frame_rate_override=true
+
+# Miscellaneous
+dev.usbsetting.embedded=on
+ro.arch=exynos850
+ro.kernel.qemu=0
+ro.kernel.qemu.gles=2
+ro.oem_unlock_supported=1
+ro.security.fips.ux=Disabled
+ro.sys.fw.dex2oat_thread_count=6
+ro.zram.mark_idle_delay_mins=30
+sys.hqm.support=true
+persist.demo.hdmirotationlock=false
+persist.log.level=0
+persist.log.semlevel=0
+oneseg.extSdCard.path=/storage/extSdCard
