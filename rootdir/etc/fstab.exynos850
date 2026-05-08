@@ -17,6 +17,10 @@ odm                                          /odm                 ext4      ro,b
 /dev/block/by-name/cpefs                     /mnt/vendor/cpefs    ext4      noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic                     wait,check,nofail
 /dev/block/by-name/misc                      /misc                emmc      defaults                                                                                                  defaults,first_stage_mount
 
+# Boot and Recovery partitions – required by OTA generation (never mounted during normal boot)
+/dev/block/by-name/boot                      /boot                emmc      defaults                                                                                                  recoveryonly
+/dev/block/by-name/recovery                  /recovery            emmc      defaults                                                                                                  recoveryonly
+
 # 2GB ZRAM swap (zramsize in bytes)
 /dev/block/zram0                             none                 swap      defaults                                                                                                  zramsize=2147483648
 

@@ -117,7 +117,6 @@ $(call soong_config_set,samsungCameraVars,usage_64bit,true)
 AB_OTA_UPDATER := false
 
 ## Keymaster
-TARGET_KEYMASTER_VARIANT := samsung
 
 # Storage flag (external SD card is supported)
 BOARD_HAS_REMOVABLE_STORAGE := true
