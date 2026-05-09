@@ -348,11 +348,15 @@ PRODUCT_PACKAGES += \
 # END OF VENDOR PREBUILTS
 # ===========================================================================
 
-
 # Corrected Copy Paths (fstab matching BoardConfig platform name)
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.exynos850:$(TARGET_COPY_OUT_RAMDISK)/fstab.universal3830 \
     $(LOCAL_PATH)/rootdir/etc/fstab.exynos850:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.universal3830
+
+# Include disabled vbmeta images in the final zip (prevents fastboot mode)
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/prebuilts/vbmeta.img:vbmeta.img \
+    $(LOCAL_PATH)/prebuilts/vbmeta_system.img:vbmeta_system.img
 
 # Namespaces - Critical for Android 14+ Soong Build
 PRODUCT_SOONG_NAMESPACES += \

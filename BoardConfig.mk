@@ -2,6 +2,9 @@
 # SPDX-FileCopyrightText: The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
+# =============================================================================
+# This file tells the build system everything about your hardware.
+# =============================================================================
 
 DEVICE_PATH := device/samsung/a04s
 
@@ -73,6 +76,8 @@ TARGET_FORCE_PREBUILT_KERNEL := true
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilts/kernel
 TARGET_PREBUILT_DTB   := $(DEVICE_PATH)/prebuilts/dtb.img
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilts/dtbo.img
+BOARD_PREBUILT_DTBIMAGE_DIR := $(DEVICE_PATH)/prebuilts
+BOARD_CUSTOM_DTBIMG := $(DEVICE_PATH)/prebuilts/dtb.img
 
 # The prebuilt kernel file is called "kernel", not "Image"
 BOARD_KERNEL_IMAGE_NAME := kernel
@@ -176,15 +181,36 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Security patch level
 VENDOR_SECURITY_PATCH := 2025-12-01
 
-# Verified Boot
+# ------------------------------------------------------------------------------
+# Verified Boot (AVB) – we MUST produce vbmeta.img and vbmeta_system.img
+# otherwise the bootloader will not accept the custom ROM.
+# ------------------------------------------------------------------------------
+
 BOARD_AVB_ENABLE := true
+
+# Main vbmeta – disable verification (flags 3) and use a test key
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
-BOARD_BUILD_DISABLED_VBMETAIMAGE := true
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --algorithm NONE
+
+# Recovery signing (needed for the recovery image to pass AVB)
 BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+
+# --- Chained vbmeta_system ---
+# This tells the build to create vbmeta_system.img and include the system
+# partition descriptor inside it. Without this, only vbmeta.img is created.
+BOARD_AVB_VBMETA_SYSTEM := system
+BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
+BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA4096
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := 1
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+
+# --- Releasetools extension (flashes vbmeta images automatically) ---
+TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)/releasetools.py
+
+# ------------------------------------------------------------------------------
 
 # Soong configuration for Exynos HWC and USB
 SOONG_CONFIG_NAMESPACES += exynos_hwc
@@ -193,7 +219,7 @@ SOONG_CONFIG_exynos_hwc := \
     libhdr_header_version \
     USE_HDR_INTERFACE
 
-SOONG_CONFIG_exynos_hwc_target_soc_base := essi                # ← was missing
+SOONG_CONFIG_exynos_hwc_target_soc_base := essi
 SOONG_CONFIG_exynos_hwc_libhdr_header_version := exynos850
 SOONG_CONFIG_exynos_hwc_USE_HDR_INTERFACE := "true"
 
