@@ -1,0 +1,29 @@
+# Touchscreen initialization for Samsung Galaxy A04s (Exynos 850)
+# This script sets permissions and sends initialisation commands
+# on boot, and re‑applies them every time the screen turns on
+# (so that touch survives blank/unblank).
+
+on init
+    # Ensure /sys/class/sec exists
+    mkdir /sys/class/sec 0771 root root
+    restorecon_recursive /sys/class/sec/tsp
+    restorecon /sys/class/sec/tsp/cmd
+
+    # Permissions
+    chown system radio /sys/class/sec/tsp/cmd
+    chmod 0660 /sys/class/sec/tsp/cmd
+    chown system system /sys/class/sec/tsp/enabled
+    chmod 0660 /sys/class/sec/tsp/enabled
+
+    # First initialisation (boot)
+    write /sys/class/sec/tsp/cmd aot_enable,1
+    write /sys/class/sec/tsp/cmd check_connection
+    write /sys/class/sec/tsp/enabled 1,0
+    write /sys/class/sec/tsp/enabled 2,1
+
+# Re‑send the wake commands every time the screen turns on
+on property:sys.screen_on=1
+    write /sys/class/sec/tsp/cmd aot_enable,1
+    write /sys/class/sec/tsp/cmd check_connection
+    write /sys/class/sec/tsp/enabled 1,0
+    write /sys/class/sec/tsp/enabled 2,1
