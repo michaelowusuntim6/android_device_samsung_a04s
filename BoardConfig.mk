@@ -10,14 +10,14 @@ DEVICE_PATH := device/samsung/a04s
 
 # Architecture
 TARGET_ARCH := arm64
-TARGET_ARCH_VARIANT := armv8-a
+TARGET_ARCH_VARIANT := armv8-2a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 := 
 TARGET_CPU_VARIANT := cortex-a55
 TARGET_CPU_VARIANT_RUNTIME := cortex-a55
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv8-2a
+TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a55
@@ -82,9 +82,9 @@ BOARD_CUSTOM_DTBIMG := $(DEVICE_PATH)/prebuilts/dtb.img
 # The prebuilt kernel file is called "kernel", not "Image"
 BOARD_KERNEL_IMAGE_NAME := kernel
 
-# When using prebuilt kernel, dtb is embedded directly, separate DTBO is disabled
+# When using prebuilt kernel, dtb is embedded directly, separate DTBO is enabled
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_KERNEL_SEPARATED_DTBO := false
+BOARD_KERNEL_SEPARATED_DTBO := true
 
 # Kernel offsets and header version
 BOARD_BOOT_HEADER_VERSION := 2
@@ -101,8 +101,7 @@ BOARD_KERNEL_CMDLINE := console=ttySAC2,115200n8 androidboot.console=ttySAC2 pri
 BOARD_KERNEL_CMDLINE += androidboot.hardware=exynos850 self_state=0x0
 BOARD_KERNEL_CMDLINE += androidboot.boot_devices=12100000.dwmmc0
 BOARD_KERNEL_CMDLINE += loop.max_part=7
-BOARD_KERNEL_CMDLINE += activity_manager_native_boot.use_freezer=true
-BOARD_KERNEL_CMDLINE += zram.backend=lz4
+BOARD_KERNEL_CMDLINE += zram.backend=lzo-rle
 BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 
 # mkbootimg arguments
@@ -111,7 +110,7 @@ BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --second_offset $(BOARD_SECOND_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
-BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
+# BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS += --board $(TARGET_BOOTLOADER_BOARD_NAME)
 
