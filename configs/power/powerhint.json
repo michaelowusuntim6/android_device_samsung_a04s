@@ -1,0 +1,37 @@
+{
+    "Nodes": [
+        {
+            "Name": "TASchedtuneBoost",
+            "Path": "/dev/stune/top-app/schedtune.boost",
+            "Values": [
+                "30",
+                "5"
+            ],
+            "ResetOnInit": true
+        },
+        {
+            "Name": "DoubleTapToWakeEnable",
+            "Path": "/sys/class/sec/tsp/cmd",
+            "Values": [
+                "aot_enable,0",
+                "aot_enable,1"
+            ],
+            "DefaultIndex": 0,
+            "ResetOnInit": false
+        }
+    ],
+    "Actions": [
+        {
+            "PowerHint": "INTERACTION",
+            "Node": "TASchedtuneBoost",
+            "Duration": 0,
+            "Value": "30"
+        },
+        {
+            "PowerHint": "DOUBLE_TAP_TO_WAKE",
+            "Node": "DoubleTapToWakeEnable",
+            "Duration": 0,
+            "Value": "aot_enable,1"
+        }
+    ]
+}
