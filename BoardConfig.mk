@@ -110,7 +110,7 @@ BOARD_KERNEL_IMAGE_NAME := Image
 TARGET_KERNEL_NO_GCC := true
 TARGET_KERNEL_SOURCE := kernel/samsung/exynos850
 # A04s uses the same defconfig as A13 for now
-TARGET_KERNEL_CONFIG := exynos850-a13nsxx_defconfig
+TARGET_KERNEL_CONFIG := exynos850-a04sxx_defconfig
 
 # Init
 $(call soong_config_set,libinit,vendor_init_lib,//device/samsung/a04s:libinit_exynos3830)
