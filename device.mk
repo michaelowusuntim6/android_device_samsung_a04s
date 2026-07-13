@@ -13,16 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Define paths explicitly for sandboxed/isolated parsing (Android 16 requirement)
+DEVICE_PATH := device/samsung/a04s
+COMMON_PATH := device/samsung/a04s
 
 # Inherit proprietary files
 $(call inherit-product, vendor/samsung/a04s/a04s-vendor.mk)
 
 # Setup dalvik vm configs
 $(call inherit-product, frameworks/native/build/phone-xhdpi-4096-dalvik-heap.mk)
-
-# NFC config (from A04s)
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/configs/system/etc/libnfc-nci.conf:$(TARGET_COPY_OUT_SYSTEM)/etc/libnfc-nci.conf
 
 # Enable project quotas and casefolding for emulated storage without sdcardfs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
@@ -163,7 +162,7 @@ PRODUCT_ENABLE_UFFD_GC := true
 PRODUCT_PACKAGES += \
     android.hardware.keymaster@4.0-service.samsung
 
-$(call soong_config_set,samsungVars,target_keymaster4_library,//vendor/samsung/a13-common:libskeymaster4device)
+$(call soong_config_set,samsungVars,target_keymaster4_library,//vendor/samsung/a04s:libskeymaster4device)
 
 # Lineage Health
 PRODUCT_PACKAGES += \

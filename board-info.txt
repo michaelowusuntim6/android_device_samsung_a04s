@@ -1,0 +1,1 @@
+require board=a04s|universal3830|a04snsxx|exynos850

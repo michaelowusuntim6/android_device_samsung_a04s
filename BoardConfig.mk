@@ -19,6 +19,10 @@
 
 DEVICE_PATH := device/samsung/a04s
 
+# Board
+TARGET_BOARD_INFO_FILE := device/samsung/a04s/board-info.txt
+
+
 ## Inherit proprietary vendor configuration
 include vendor/samsung/a04s/BoardConfigVendor.mk
 
@@ -108,8 +112,7 @@ TARGET_USES_VULKAN := true
 ## Kernel
 BOARD_KERNEL_IMAGE_NAME := Image
 TARGET_KERNEL_NO_GCC := true
-TARGET_KERNEL_SOURCE := kernel/samsung/exynos850
-# A04s uses the same defconfig as A13 for now
+TARGET_KERNEL_SOURCE := kernel/samsung/a04s
 TARGET_KERNEL_CONFIG := exynos850-a04sxx_defconfig
 
 # Init
