@@ -14,6 +14,12 @@
 # limitations under the License.
 #
 
+# Disable uses-library verification for prebuilt WebView
+PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true
+
+# Use AOSP WebView stub instead of Google prebuilt
+WITH_GOOGLE_WEBVIEW := false
+
 ## Inherit from generic products, most specific first
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
