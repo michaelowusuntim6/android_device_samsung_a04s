@@ -20,8 +20,18 @@ COMMON_PATH := device/samsung/a04s
 # Inherit proprietary files
 $(call inherit-product, vendor/samsung/a04s/a04s-vendor.mk)
 
-# Setup dalvik vm configs
-$(call inherit-product, frameworks/native/build/phone-xhdpi-4096-dalvik-heap.mk)
+# Inherit the safe 2GB baseline properties first
+$(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
+
+PRODUCT_PRODUCT_PROPERTIES += \
+    dalvik.vm.heapstartsize=8m \
+    dalvik.vm.heapgrowthlimit=256m \
+    dalvik.vm.heapsize=512m \
+    dalvik.vm.heaptargetutilization=0.70 \
+    dalvik.vm.heapminfree=2m \
+    dalvik.vm.heapmaxfree=12m \
+    dalvik.vm.usap_pool_enabled=true \
+    dalvik.vm.usap_pool_size_max=1
 
 # Enable project quotas and casefolding for emulated storage without sdcardfs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
