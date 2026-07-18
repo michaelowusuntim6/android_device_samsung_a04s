@@ -14,39 +14,45 @@
 # limitations under the License.
 
 # ============================================================
-# BoardConfig for Samsung Galaxy A04s (a04s)
+# BoardConfig for Samsung Galaxy A04s (SM‑A047F)
 # ============================================================
 
 DEVICE_PATH := device/samsung/a04s
 
-# Board
-TARGET_BOARD_INFO_FILE := device/samsung/a04s/board-info.txt
-
-
-## Inherit proprietary vendor configuration
+# -----------------------------------------------------------------
+# Board & Vendor
+# -----------------------------------------------------------------
+TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
 include vendor/samsung/a04s/BoardConfigVendor.mk
 
-# Build with broken namespaces
 BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE := true
 
-## Architecture
+# -----------------------------------------------------------------
+# Architecture (optimised for Cortex‑A55)
+# -----------------------------------------------------------------
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_VARIANT := generic
+TARGET_CPU_ABI2 :=
+TARGET_CPU_VARIANT := cortex-a55
+TARGET_CPU_VARIANT_RUNTIME := cortex-a55
 
-## Architecture (Secondary)
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv8-a
+TARGET_2ND_ARCH_VARIANT := armv8-2a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := generic
+TARGET_2ND_CPU_VARIANT := cortex-a55
+TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a55
 
-## Audio
+# -----------------------------------------------------------------
+# Audio
+# -----------------------------------------------------------------
 $(call soong_config_set,exynos_audio,PREDEFINED_LOW_CAPTURE_DURATION,20)
 $(call soong_config_set,exynos_audio,PROXY_LIBRARY,//device/samsung/a04s:libaudioproxy)
 
-## Boot Image
+# -----------------------------------------------------------------
+# Boot Image
+# -----------------------------------------------------------------
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_CUSTOM_BOOTIMG := true
 BOARD_DTB_OFFSET := 0x00000000
@@ -66,13 +72,23 @@ BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
-BOARD_BOOTCONFIG += androidboot.selinux=permissive
+# Kernel command line – minimal, based on stock
+BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850
+BOARD_KERNEL_CMDLINE += androidboot.boot_devices=12100000.dwmmc0
+BOARD_KERNEL_CMDLINE += androidboot.dtbo_idx=5
+BOARD_KERNEL_CMDLINE += androidboot.verifiedbootstate=orange
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 
-## Display
+# -----------------------------------------------------------------
+# Display
+# -----------------------------------------------------------------
 BOARD_MINIMUM_DISPLAY_BRIGHTNESS := 1
 TARGET_SCREEN_DENSITY := 300
+TARGET_USES_VULKAN := true
 
-## Dynamic Partitions
+# -----------------------------------------------------------------
+# Dynamic Partitions
+# -----------------------------------------------------------------
 BOARD_SUPER_PARTITION_SIZE := 6845104128
 BOARD_SUPER_PARTITION_GROUPS := samsung_dynamic_partitions
 BOARD_SAMSUNG_DYNAMIC_PARTITIONS_SIZE := 6840909824
@@ -85,7 +101,9 @@ BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST := \
 
 -include vendor/lineage/config/BoardConfigReservedSize.mk
 
-## Filesystem
+# -----------------------------------------------------------------
+# Filesystem
+# -----------------------------------------------------------------
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -106,22 +124,27 @@ TARGET_COPY_OUT_VENDOR := vendor
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 
-## Graphics
-TARGET_USES_VULKAN := true
-
-## Kernel
+# -----------------------------------------------------------------
+# Kernel
+# -----------------------------------------------------------------
 BOARD_KERNEL_IMAGE_NAME := Image
 TARGET_KERNEL_NO_GCC := true
 TARGET_KERNEL_SOURCE := kernel/samsung/a04s
 TARGET_KERNEL_CONFIG := exynos850-a04sxx_defconfig
 
+# -----------------------------------------------------------------
 # Init
+# -----------------------------------------------------------------
 $(call soong_config_set,libinit,vendor_init_lib,//device/samsung/a04s:libinit_exynos3830)
 
-# A/B
+# -----------------------------------------------------------------
+# A/B (disabled)
+# -----------------------------------------------------------------
 AB_OTA_UPDATER := false
 
-## Lineage Health
+# -----------------------------------------------------------------
+# Health HAL
+# -----------------------------------------------------------------
 $(call soong_config_set,lineage_health,charging_control_charging_path,/sys/class/power_supply/battery/batt_slate_mode)
 $(call soong_config_set,lineage_health,charging_control_charging_enabled,0)
 $(call soong_config_set,lineage_health,charging_control_charging_disabled,1)
@@ -132,69 +155,88 @@ $(call soong_config_set,lineage_health,fast_charge_node,/sys/class/sec/switch/af
 $(call soong_config_set,lineage_health,fast_charge_value_none,1)
 $(call soong_config_set,lineage_health,fast_charge_value_fast_charge,0)
 
-## Manifest
-# HIDL
+# -----------------------------------------------------------------
+# HIDL / VINTF
+# -----------------------------------------------------------------
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
     hardware/samsung/vintf/samsung_framework_compatibility_matrix.xml
 DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
 DEVICE_MATRIX_FILE := $(DEVICE_PATH)/compatibility_matrix.xml
 
-## Partitions
+# -----------------------------------------------------------------
+# Partition Sizes (physical partitions)
+# -----------------------------------------------------------------
 BOARD_BOOTIMAGE_PARTITION_SIZE := 46137344
 BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 55574528
-
 BOARD_USES_METADATA_PARTITION := true
-
 BOARD_ROOT_EXTRA_FOLDERS := efs
 
-## Platform
+# -----------------------------------------------------------------
+# Platform / SoC
+# -----------------------------------------------------------------
 BOARD_VENDOR := samsung
 TARGET_BOARD_PLATFORM := universal3830
-TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
 TARGET_BOOTLOADER_BOARD_NAME := exynos850
 TARGET_SOC := exynos850
+
+# Include common Exynos 850 hardware configuration
 include hardware/samsung_slsi-linaro/config/BoardConfig850.mk
 
-## DTB
+# -----------------------------------------------------------------
+# Device Tree Blobs
+# -----------------------------------------------------------------
 BOARD_DTB_CFG := $(DEVICE_PATH)/configs/kernel/$(TARGET_SOC).cfg
-
-## DTBO
 BOARD_KERNEL_SEPARATED_DTBO := true
 BOARD_DTBO_CFG := $(DEVICE_PATH)/configs/kernel/$(TARGET_DEVICE).cfg
 
-## Properties
+# -----------------------------------------------------------------
+# Properties
+# -----------------------------------------------------------------
 TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 
-## Recovery
+# -----------------------------------------------------------------
+# Recovery
+# -----------------------------------------------------------------
 BOARD_INCLUDE_RECOVERY_DTBO := true
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/configs/init/fstab.exynos850
 TARGET_RECOVERY_PIXEL_FORMAT := ABGR_8888
 
-## Releasetools
+# -----------------------------------------------------------------
+# Releasetools
+# -----------------------------------------------------------------
 TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_exynos850
 TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)/releasetools
 
-## RIL
+# -----------------------------------------------------------------
+# RIL / Telephony
+# -----------------------------------------------------------------
 ENABLE_VENDOR_RIL_SERVICE := true
 $(call soong_config_set,cbd,protocol,sipc)
 
-## Security
+# -----------------------------------------------------------------
+# Security Patch Level
+# -----------------------------------------------------------------
 VENDOR_SECURITY_PATCH := 2025-12-01
 
-## SELinux
+# -----------------------------------------------------------------
+# SELinux
+# -----------------------------------------------------------------
 BOARD_SEPOLICY_TEE_FLAVOR := teegris
 include device/lineage/sepolicy/exynos/sepolicy.mk
 include device/samsung_slsi/sepolicy/sepolicy.mk
-
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 
-## USB
+# -----------------------------------------------------------------
+# USB
+# -----------------------------------------------------------------
 $(call soong_config_set,samsungUsbGadgetVars,gadget_name,13600000.dwc3)
 
-## Verified Boot
+# -----------------------------------------------------------------
+# Verified Boot (AVB)
+# -----------------------------------------------------------------
 BOARD_AVB_ENABLE := true
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 0
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --algorithm NONE
@@ -204,7 +246,9 @@ BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 
-## Wi-Fi
+# -----------------------------------------------------------------
+# Wi‑Fi
+# -----------------------------------------------------------------
 BOARD_WLAN_DEVICE                := slsi
 BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_slsi
@@ -214,5 +258,7 @@ WIFI_HIDL_FEATURE_DUAL_INTERFACE := true
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
 
-## OTA Assert (device-specific)
+# -----------------------------------------------------------------
+# OTA Assert (device‑specific)
+# -----------------------------------------------------------------
 TARGET_OTA_ASSERT_DEVICE := a04s
