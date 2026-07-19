@@ -28,19 +28,18 @@ include vendor/samsung/a04s/BoardConfigVendor.mk
 BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE := true
 
 # -----------------------------------------------------------------
-# Architecture (optimised for Cortex‑A55,)
+# Architecture
 # -----------------------------------------------------------------
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_ABI2 :=
-TARGET_CPU_VARIANT := cortex-a55
+TARGET_CPU_VARIANT := generic
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := cortex-a55
+TARGET_2ND_CPU_VARIANT := generic
 
 # -----------------------------------------------------------------
 # Audio
@@ -162,7 +161,7 @@ DEVICE_MATRIX_FILE := $(DEVICE_PATH)/compatibility_matrix.xml
 BOARD_BOOTIMAGE_PARTITION_SIZE := 46137344
 BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
-BOARD_FLASH_BLOCK_SIZE := 4096   # fixed: matching A13
+BOARD_FLASH_BLOCK_SIZE := 4096
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 55574528
 BOARD_USES_METADATA_PARTITION := true
 BOARD_ROOT_EXTRA_FOLDERS := efs
