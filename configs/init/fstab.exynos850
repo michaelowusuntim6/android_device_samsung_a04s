@@ -30,12 +30,11 @@ odm                                                     /odm                    
 # EFS (IMEI, baseband)
 /dev/block/by-name/efs                                  /mnt/vendor/efs         ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,check
 
+# Persist (sensors, Wi‑Fi MAC, etc.) – restored for compatibility
+/dev/block/by-name/persist                              /mnt/vendor/persist     ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,notrim,check
+
 # Misc
 /dev/block/by-name/misc                                 /misc                   emmc    defaults        defaults
 
 # VOLD (external storage)
-/devices/platform/13500000.dwmmc2/mmc_host/*            auto                    auto    defaults        voldmanaged=sdcard:auto,encryptable=userdata
-/devices/platform/13600000.usb*                         auto                    auto    defaults        voldmanaged=usb:auto
-
-# Swap
-/dev/block/zram0                                        none                    swap    defaults        zramsize=2147483648
+/devices/platform/13500000.dwmmc2/mmc_host/*            auto                    auto    defaults        voldmanaged=sdcard:auto,encryptable=u

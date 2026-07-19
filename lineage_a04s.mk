@@ -14,12 +14,6 @@
 # limitations under the License.
 #
 
-# Disable uses-library verification for prebuilt WebView
-# PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true
-
-# Use AOSP WebView stub instead of Google prebuilt
-# WITH_GOOGLE_WEBVIEW := false
-
 ## Inherit from generic products, most specific first
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
@@ -50,6 +44,10 @@ PRODUCT_MANUFACTURER := samsung
 PRODUCT_SHIPPING_API_LEVEL := 31
 
 # Set BUILD_FINGERPRINT variable to be picked up by both system and vendor build.prop
+BUILD_FINGERPRINT := samsung/a04snnxx/a04s:14/UP1A.231005.007/A047FXXSDEYL1:user/release-keys
+
+PRODUCT_GMS_CLIENTID_BASE := android-samsung
+ picked up by both system and vendor build.prop
 BUILD_FINGERPRINT := samsung/a04snnxx/a04s:14/UP1A.231005.007/A047FXXSDEYL1:user/release-keys
 
 PRODUCT_GMS_CLIENTID_BASE := android-samsung

@@ -48,6 +48,11 @@ $(call soong_config_set,exynos_audio,PREDEFINED_LOW_CAPTURE_DURATION,20)
 $(call soong_config_set,exynos_audio,PROXY_LIBRARY,//device/samsung/a04s:libaudioproxy)
 
 # -----------------------------------------------------------------
+# Camera (A13‑compatible HAL flag)
+# -----------------------------------------------------------------
+$(call soong_config_set,samsungCameraVars,needs_sec_reserved_field,true)
+
+# -----------------------------------------------------------------
 # Boot Image
 # -----------------------------------------------------------------
 BOARD_BOOTIMG_HEADER_VERSION := 2
@@ -69,8 +74,11 @@ BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
+# Kernel command line – only dtbo_idx remains (selinux moved to bootconfig)
 BOARD_KERNEL_CMDLINE := androidboot.dtbo_idx=5
-BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+
+# SELinux permissive – set via bootconfig (recommended for Android 12+)
+BOARD_BOOTCONFIG += androidboot.selinux=permissive
 
 # -----------------------------------------------------------------
 # Display
@@ -78,6 +86,8 @@ BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_MINIMUM_DISPLAY_BRIGHTNESS := 1
 TARGET_SCREEN_DENSITY := 300
 TARGET_USES_VULKAN := true
+
+# (TARGET_SCREEN_DENSITY removed – now defined in product makefile)
 
 # -----------------------------------------------------------------
 # Dynamic Partitions
@@ -243,14 +253,4 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 # Wi‑Fi
 # -----------------------------------------------------------------
 BOARD_WLAN_DEVICE                := slsi
-BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_slsi
-BOARD_HOSTAPD_DRIVER             := NL80211
-BOARD_HOSTAPD_PRIVATE_LIB        := lib_driver_cmd_slsi
-WIFI_HIDL_FEATURE_DUAL_INTERFACE := true
-WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
-WPA_SUPPLICANT_VERSION           := VER_0_8_X
-
-# -----------------------------------------------------------------
-# OTA Assert (device‑specific)
-# ------------------------------------------------
+BOARD_WPA_SUPPLICANT_DRIVE
