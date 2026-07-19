@@ -688,7 +688,7 @@ service prepare_param /system/bin/prepare_param.sh /dev/block/platform/12100000.
 
 # SSWAP
 on boot
-    write /proc/sys/vm/swappiness 160
+    write /proc/sys/vm/swappiness 60
 
 # Set watchdog timer to 40 seconds and pet it every 10 seconds to get a 30 second margin
 # Increase watchdogd priority for keeping up schedule
@@ -883,3 +883,4 @@ service pageboostd /system/bin/pageboostd
     group system mount radio net_bt sdcard_rw shell media media_rw
     socket pageboostd seqpacket 0660 system system
     disabled
+

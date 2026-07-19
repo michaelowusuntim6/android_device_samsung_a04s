@@ -28,21 +28,19 @@ include vendor/samsung/a04s/BoardConfigVendor.mk
 BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE := true
 
 # -----------------------------------------------------------------
-# Architecture (optimised for Cortex‑A55)
+# Architecture (optimised for Cortex‑A55,)
 # -----------------------------------------------------------------
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := cortex-a55
-TARGET_CPU_VARIANT_RUNTIME := cortex-a55
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv8-2a
+TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a55
-TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a55
 
 # -----------------------------------------------------------------
 # Audio
@@ -72,12 +70,7 @@ BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
-# Kernel command line – minimal, based on stock
-BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850
-BOARD_KERNEL_CMDLINE += androidboot.boot_devices=12100000.dwmmc0
-BOARD_KERNEL_CMDLINE += androidboot.dtbo_idx=5
-BOARD_KERNEL_CMDLINE += androidboot.verifiedbootstate=orange
-BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+BOARD_BOOTCONFIG += androidboot.selinux=permissive
 
 # -----------------------------------------------------------------
 # Display
@@ -169,7 +162,7 @@ DEVICE_MATRIX_FILE := $(DEVICE_PATH)/compatibility_matrix.xml
 BOARD_BOOTIMAGE_PARTITION_SIZE := 46137344
 BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
-BOARD_FLASH_BLOCK_SIZE := 131072
+BOARD_FLASH_BLOCK_SIZE := 4096   # fixed: matching A13
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 55574528
 BOARD_USES_METADATA_PARTITION := true
 BOARD_ROOT_EXTRA_FOLDERS := efs
@@ -261,4 +254,4 @@ WPA_SUPPLICANT_VERSION           := VER_0_8_X
 # -----------------------------------------------------------------
 # OTA Assert (device‑specific)
 # -----------------------------------------------------------------
-TARGET_OTA_ASSERT_DEVICE := a04s
+TARGET_OTA_ASSERT_DEVICE := a04sRT_DEVICE := a04s
