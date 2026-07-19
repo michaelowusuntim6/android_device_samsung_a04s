@@ -87,8 +87,6 @@ BOARD_MINIMUM_DISPLAY_BRIGHTNESS := 1
 TARGET_SCREEN_DENSITY := 300
 TARGET_USES_VULKAN := true
 
-# (TARGET_SCREEN_DENSITY removed – now defined in product makefile)
-
 # -----------------------------------------------------------------
 # Dynamic Partitions
 # -----------------------------------------------------------------
@@ -253,4 +251,5 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 # Wi‑Fi
 # -----------------------------------------------------------------
 BOARD_WLAN_DEVICE                := slsi
-BOARD_WPA_SUPPLICANT_DRIVE
+BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_sl

@@ -23,7 +23,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 ## Inherit from a04s device
 $(call inherit-product, device/samsung/a04s/device.mk)
 
-## Inherit some common Lineage stuff
+## Inherit some common Lineage stuff (Evolution‑X uses this as base)
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 # Evolution-X build flags
@@ -34,6 +34,12 @@ TARGET_BOOT_ANIMATION_RES := 720
 TARGET_INCLUDE_ACCORD := true
 BUILD_BCR := true
 TARGET_USES_PICO_GAPPS := true
+
+# Force RIL libraries to 32-bit (critical for telephony on Exynos)
+PRODUCT_PACKAGES += \
+    secril_config_svc:32 \
+    sehradiomanager:32 \
+    cbd:32
 
 ## Device identifier, this must come after all inclusions
 PRODUCT_DEVICE := a04s
@@ -47,7 +53,6 @@ PRODUCT_SHIPPING_API_LEVEL := 31
 BUILD_FINGERPRINT := samsung/a04snnxx/a04s:14/UP1A.231005.007/A047FXXSDEYL1:user/release-keys
 
 PRODUCT_GMS_CLIENTID_BASE := android-samsung
- picked up by both system and vendor build.prop
-BUILD_FINGERPRINT := samsung/a04snnxx/a04s:14/UP1A.231005.007/A047FXXSDEYL1:user/release-keys
+RPRINT := samsung/a04snnxx/a04s:14/UP1A.231005.007/A047FXXSDEYL1:user/release-keys
 
 PRODUCT_GMS_CLIENTID_BASE := android-samsung
