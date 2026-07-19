@@ -1,1 +1,1 @@
-board=a04sard=a04s|universal3830|a04snsxx|exynos850
+require board=a04s|universal3830|a04snsxx|exynos850
