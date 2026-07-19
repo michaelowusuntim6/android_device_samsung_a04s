@@ -1,30 +1,19 @@
 on early-init
     mkdir /mnt/vendor/efs 0771 radio system
-    mkdir /mnt/vendor/cpefs 0771 radio system
     mkdir /mnt/vendor/persist 0771 system system
-    mount debugfs /sys/kernel/debug /sys/kernel/debug
 
 on init
+    # AFC permissions for fast charge
+    chown system radio /sys/class/sec/switch/afc_disable
+
     # Set permissions for persist partition
     mkdir /persist 0771 system system
-
-    # See storage config details at http://source.android.com/tech/storage/
-    mkdir /storage/sdcard 0000 root root
-    mkdir /storage/usb1 0000 root root
-    mkdir /storage/usb2 0000 root root
-    mkdir /mnt/media_rw/sdcard 0700 media_rw media_rw
-    mkdir /mnt/media_rw/usb1 0700 media_rw media_rw
-    mkdir /mnt/media_rw/usb2 0700 media_rw media_rw
-
-    export SECONDARY_STORAGE /storage/sdcard:/storage/usb1:/storage/usb2
-
-    # Support legacy paths
-    symlink /storage/sdcard /mnt/ext_sd
-    symlink /data/app /factory
-
+	
+    #Reactivation Lock
     symlink /dev/block/platform/12100000.dwmmc0/by-name/steady /dev/block/steady
+
+    #Google FRP solution
     symlink /dev/block/platform/12100000.dwmmc0/by-name/persistent /dev/block/persistent
-    symlink /dev/block/platform/12100000.dwmmc0/by-name/param /dev/block/param
 
     ## SCSC WLAN
     # SD-755: Increase default socket rx buffer limit
@@ -110,94 +99,98 @@ on init
     chown system system /dev/cpuset/cgroup.procs
     chmod 0664 /dev/cpuset/tasks
 
+    # for power hal
+    chown system system /dev/cluster0_freq_min
+    chown system system /dev/cluster0_freq_max
+    chown system system /dev/cluster1_freq_min
+    chown system system /dev/cluster1_freq_max
+    chown system system /dev/cluster2_freq_min
+    chown system system /dev/cluster2_freq_max
+    chown system system /dev/cpu_dma_latency
+    chown system system /dev/stune/top-app/schedtune.boost
+    chmod 0664 /dev/cluster0_freq_min
+    chmod 0664 /dev/cluster0_freq_max
+    chmod 0664 /dev/cluster1_freq_min
+    chmod 0664 /dev/cluster1_freq_max
+    chmod 0664 /dev/cluster2_freq_min
+    chmod 0664 /dev/cluster2_freq_max
+    chmod 0664 /dev/cpu_dma_latency
+    chmod 0664 /dev/stune/top-app/schedtune.boost
+
+    chown system system /sys/kernel/ems/emstune/req_mode
+    chmod 0664 /sys/kernel/ems/emstune/req_mode
+
+# GPU DVFS
+    chown system system /sys/kernel/gpu/gpu_min_clock
+    chown system system /sys/kernel/gpu/gpu_max_clock
+    chown system system /sys/kernel/gpu/gpu_freq_table
+    chmod 0664 /sys/kernel/gpu/gpu_min_clock
+    chmod 0664 /sys/kernel/gpu/gpu_max_clock
+    chmod 0444 /sys/kernel/gpu/gpu_freq_table
+
     #sensor
     chmod 0664 /dev/nanohub
     chmod 0664 /dev/nanohub_comms
     chown system system /dev/nanohub
     chown system system /dev/nanohub_comms
 
-    #SystemPerformance - ActivityManagerPerformance
-    setprop sys.config.amp_to_app_switch 6000
-
-
     # Configuration to G2D blocking mode
     write /sys/module/g2d_task/parameters/block_on_contension 1
 
     start watchdogd
 
+    setprop ro.boot.hardware.revision ${ro.revision}
+
 on post-fs
-# set RLIMIT_MEMLOCK to 64MB
+    # set RLIMIT_MEMLOCK to 64MB
     setrlimit 8 67108864 67108864
 
 on post-fs-data
-# Exynos Data folder
-    mkdir /data/exynos 0771 root system
-    mkdir /data/exynos/log 0771 root system
-    mkdir /data/exynos/log/cbd 0771 root system
-    mkdir /data/exynos/log/dmd 0771 root system
-    mkdir /data/exynos/log/dump 0771 radio system
-    mkdir /data/exynos/log/rild 0771 root system
-    mkdir /data/exynos/log/sced 0771 root system
-    mkdir /data/exynos/log/slog 0771 system system
-    mkdir /data/exynos/log/vcd 0771 root system
-    mkdir /data/exynos/log/chub 0771 root system
-    mkdir /data/exynos/gnss 0771 system system
-    mkdir /data/exynos/gnss/gps 0771 system system
+# setup cgroup freezer for freecess
+    mkdir /dev/freezer
+    mount cgroup none /dev/freezer freezer
+    mkdir /dev/freezer/frozen
+    mkdir /dev/freezer/thaw
+    write /dev/freezer/frozen/freezer.state FROZEN
+    write /dev/freezer/thaw/freezer.state THAWED
+
+# MARs for freecess
+    chown system system /dev/freezer
+    chown system system /dev/freezer/frozen
+    chown system system /dev/freezer/frozen/tasks
+    chown system system /dev/freezer/frozen/cgroup.procs
+    chown system system /dev/freezer/thaw
+    chown system system /dev/freezer/thaw/tasks
+    chown system system /dev/freezer/thaw/cgroup.procs
+
+# MARs for freecess
+    chmod 0644 /dev/freezer/frozen/tasks
+    chmod 0644 /dev/freezer/frozen/cgroup.procs
+    chmod 0644 /dev/freezer/thaw/tasks
+    chmod 0644 /dev/freezer/thaw/cgroup.procs
+
+# OLAF setup
+    mkdir /dev/freezer/olaf
+    write /dev/freezer/olaf/freezer.state THAWED
+    chown system system /dev/freezer/olaf
+    chown system system /dev/freezer/olaf/tasks
+    chown system system /dev/freezer/olaf/cgroup.procs
+    chown system system /dev/freezer/olaf/freezer.state
+    chmod 0644 /dev/freezer/olaf/tasks
+    chmod 0644 /dev/freezer/olaf/cgroup.procs
+    chmod 0644 /dev/freezer/olaf/freezer.state
+
+# TEEGRIS service
+    mkdir /data/vendor/tee 0700 system system
 
 # Log data folder
-    mkdir /data/exynos/log 0771 radio system
     mkdir /data/vendor 0771 root system
     mkdir /data/vendor/log 0771 root system
-    mkdir /data/vendor/log/abox 0775 audioserver system
-
-    chmod 0755 /sys/kernel/debug/tracing
-    restorecon /sys/kernel/debug/tracing/trace_marker
+    mkdir /data/vendor/log/abox 0771 audioserver system
 
     setprop vold.post_fs_data_done 1
 
     mkdir /data/vendor/sensorhub/ 0771 root system
-
-# Permissions for audio
-    chmod 0660 /proc/audio/abox_qos
-    chown audioserver system /proc/audio/abox_qos
-    chmod 0660 /proc/audio/aboxhalflog
-    chown audioserver system /proc/audio/aboxhalflog
-
-    chown audioserver system /proc/abox/snapshot_0/log
-    chown audioserver system /proc/abox/snapshot_0/valid
-    chown audioserver system /proc/abox/snapshot_0/clear
-    chown audioserver system /proc/abox/dump/log
-
-# permissions for bluetooth.
-    setprop ro.bt.bdaddr_path "/mnt/vendor/efs/bluetooth/bt_addr"
-    chown bluetooth bluetooth ro.bt.bdaddr_path
-
-# for BT MAC address
-    mkdir /mnt/vendor/efs/bluetooth 0770 system bluetooth
-# if already exist
-    chown system bluetooth /mnt/vendor/efs/bluetooth
-    chown system bluetooth /mnt/vendor/efs/bluetooth/bt_addr
-    chmod 0770 /mnt/vendor/efs/bluetooth
-    chmod 0660 /mnt/vendor/efs/bluetooth/bt_addr
-
-# Directory for GPS
-    rm /data/system/gps/gps_started
-    rm /data/system/gps/glonass_started
-    rm /data/system/gps/beidou_started
-    rm /data/system/gps/smd_started
-    rm /data/system/gps/sv_cno.info
-
-## SCSC WLAN
-    # Setup Wi-Fi permissions
-    mkdir /data/vendor/wifi 0770 wifi system
-    mkdir /data/vendor/wifi/wpa 0770 wifi system
-    mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
-    mkdir /data/vendor/wifi/hostapd/sockets 0770 wifi wifi
-    mkdir /vendor/etc/wifi 0770 system system
-    mkdir /data/vendor/log/wifi 0770 wifi wifi
-    chown wifi wifi /sys/wifi/memdump
-
-    write /sys/class/net/wlan0/queues/rx-0/rps_cpus fe
 
 # Permissions Camera
     mkdir /data/vendor/camera 0770 cameraserver system
@@ -257,18 +250,25 @@ on post-fs-data
     chown system radio /sys/class/camera/rear/rear3_moduleid
     chown system radio /sys/class/camera/rear/rear3_tilt
 
+    # Access permission for input_suspend
+    chown system system /sys/class/power_supply/battery/input_suspend
+    chmod 0666 /sys/class/power_supply/battery/input_suspend
+
 # Permission for flashlight control for HAL3.3
 # The Istor espresso board does not have the flash led h/w, So the below permission line are blocked.
 # If you want to test the flashlight in universal board which have the flash led h/w, Enable the below blocked lines.
     chmod 0660 /sys/class/camera/flash/rear_flash
     chown cameraserver system /sys/class/camera/flash/rear_flash
 
+# Flashlight control for HAL3
+   chmod 0660 /sys/class/leds/fled-s2mu106/fled_mode
+   chown system camera /sys/class/leds/fled-s2mu106/fled_mode
+   chmod 0660 /sys/class/leds/fled-s2mu106/fled_torch_curr
+   chown system camera /sys/class/leds/fled-s2mu106/fled_torch_curr
+
 # Permissions for SVC
     chown system system /sys/devices/svc/Camera/SVC_rear_module
     chown system system /sys/devices/svc/Camera/SVC_front_module
-
-    chmod 0755 /sys/kernel/debug/tracing
-    restorecon /sys/kernel/debug/tracing/trace_marker
 
 # Video
     mkdir /data/vendor/media 0700 mediacodec mediacodec
@@ -276,114 +276,77 @@ on post-fs-data
 # HWC data
     mkdir /data/vendor/log/hwc 0771 system graphics
 
-# Fingerprint sensor
-    chmod 0660 /dev/goodix_fp
-    chown system system /dev/goodix_fp
-    chown system radio /sys/class/fingerprint/fingerprint/type_check
-    chown system radio /sys/class/fingerprint/fingerprint/name
-    chown system radio /sys/class/fingerprint/fingerprint/vendor
-    chown system radio /sys/class/fingerprint/fingerprint/adm
-    chown system radio /sys/class/fingerprint/fingerprint/bfs_values
-    chown system radio /sys/class/fingerprint/fingerprint/intcnt
-    chown system radio /sys/class/fingerprint/fingerprint/resetcnt
+# permissions for bluetooth.
+    setprop ro.bt.bdaddr_path "/mnt/vendor/efs/bluetooth/bt_addr"
+    chown bluetooth bluetooth ro.bt.bdaddr_path
 
-    mkdir /data/vendor/biometrics 0770 system system
-    mkdir /data/vendor/fpSnrTest 0770 system system
+# for BT MAC address
+    mkdir /mnt/vendor/efs/bluetooth 0770 system bluetooth
+# if already exist
+    chown system bluetooth /mnt/vendor/efs/bluetooth
+    chown system bluetooth /mnt/vendor/efs/bluetooth/bt_addr
+    chmod 0770 /mnt/vendor/efs/bluetooth
+    chmod 0660 /mnt/vendor/efs/bluetooth/bt_addr
 
-# setup cgroup freezer for freecess
-    mkdir /dev/freezer
-    mount cgroup none /dev/freezer freezer
-    mkdir /dev/freezer/frozen
-    mkdir /dev/freezer/thaw
-    write /dev/freezer/frozen/freezer.state FROZEN
-    write /dev/freezer/thaw/freezer.state THAWED
+# for WIFI MAC address
+    # Setup Wi-Fi permissions
+    mkdir /data/vendor/wifi 0770 wifi system
+    mkdir /data/vendor/wifi/wpa 0770 wifi system
+    mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
+    mkdir /data/vendor/wifi/hostapd/sockets 0770 wifi wifi
+    mkdir /vendor/etc/wifi 0770 system system
+    mkdir /data/vendor/log/wifi 0770 wifi wifi
+    chown wifi wifi /sys/wifi/memdump
 
-# MARs for freecess
-    chown system system /dev/freezer
-    chown system system /dev/freezer/frozen
-    chown system system /dev/freezer/frozen/tasks
-    chown system system /dev/freezer/frozen/cgroup.procs
-    chown system system /dev/freezer/frozen/freezer.state
-    chown system system /dev/freezer/thaw
-    chown system system /dev/freezer/thaw/tasks
-    chown system system /dev/freezer/thaw/cgroup.procs
+# for WIFI TRP/TIS
+    chown wifi wifi /data/vendor/conn/.psm.info
+    chmod 0640 /data/vendor/conn/.psm.info
 
-# MARs for freecess
-    chmod 0644 /dev/freezer/frozen/tasks
-    chmod 0644 /dev/freezer/frozen/cgroup.procs
-    chmod 0644 /dev/freezer/frozen/freezer.state
-    chmod 0644 /dev/freezer/thaw/tasks
-    chmod 0644 /dev/freezer/thaw/cgroup.procs
+    write /sys/class/net/wlan0/queues/rx-0/rps_cpus fe
+
+# Samsung Pay
+#    mkdir /efs/pfw_data 0760 vendor_spay vendor_spay
+
+# MST/NFC Switch
+#    chown vendor_spay system /dev/mst_ctrl
+#    chmod 0660 /dev/mst_ctrl
 
 on boot
-    setprop wifi.interface wlan0
+# SSWAP
+    write /proc/sys/vm/swappiness 160
+
     write /proc/sys/vm/min_free_order_shift 4
 
-    restorecon_recursive /sys/kernel/debug
-    #write /sys/module/scsc_mx/parameters/disable_recovery_handling 2
+    # Permissions for NAD
+    symlink /dev/block/platform/12100000.dwmmc0/by-name/nad_refer /dev/block/NAD_REFER
 
-    # Allow to access debugfs for system:system
-    chmod 0755 /sys/kernel/debug
-    chown system system /sys/kernel/debug
+    # CPU dynamic hotplug
+    chown system system /sys/power/cpuhp/enabled
+    chown system system /sys/power/cpuhp/online_cpu
+    chown system system /sys/power/cpuhp/set_online_cpu
+    chmod 0664 /sys/power/cpuhp/enabled
+    chmod 0664 /sys/power/cpuhp/set_online_cpu
 
-    # LPM Info
-    chown system system /efs/lpm_info.log
-    chmod 0660 /efs/lpm_info.log
+    # CPU C-state node
+    chown radio system /sys/module/cpuidle/parameters/off
+    chmod 0664 /sys/module/cpuidle/parameters/off
 
-    setprop ro.radio.noril no
+    # CPU online status
+    chown system system /sys/devices/system/cpu/cpu1/online
+    chown system system /sys/devices/system/cpu/cpu2/online
+    chown system system /sys/devices/system/cpu/cpu3/online
+    chown system system /sys/devices/system/cpu/cpu4/online
+    chown system system /sys/devices/system/cpu/cpu5/online
+    chown system system /sys/devices/system/cpu/cpu6/online
+    chown system system /sys/devices/system/cpu/cpu7/online
 
-    # Set up kernel tracing, but disable it by default
-    chmod 0222 /sys/kernel/debug/tracing/trace_marker
-    write /sys/kernel/debug/tracing/tracing_on 0
+    # wifi
+    setprop wifi.interface wlan0
 
-    # Change permission for interactive governor
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/boost
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/boost
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/boostpulse
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/input_boost
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/input_boost
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/boostpulse_duration
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/boostpulse_duration
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy
-    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy
-
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/boost
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/boost
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/input_boost
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/input_boost
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration
-    chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy
-    chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy
+    # RTC reset status (bigdata)
+    chown system system /sys/power/rtc_status
+    chown system system /efs/FactoryApp/rtc_status
+    chmod 0664 /efs/FactoryApp/rtc_status
 
     # Change permission for A-Box firmware logs file & GPR dump
     chown audioserver system /sys/devices/platform/14a50000.abox/reset
@@ -394,9 +357,6 @@ on boot
     chown audioserver system /sys/devices/platform/14a50000.abox/0.abox-debug/calliope_dram
     chown audioserver system /sys/devices/platform/14a50000.abox/0.abox-debug/calliope_log
     chown audioserver system /sys/devices/platform/14a50000.abox/0.abox-debug/calliope_slog
-    chown audioserver system /sys/kernel/debug/regmap/14a50000.abox/registers
-    chown audioserver system /proc/abox/log-00
-    chown audioserver system /proc/abox/qos
 
 #Performance
     #CPUFREQ
@@ -408,10 +368,6 @@ on boot
     chmod 0664 /sys/power/cpufreq_min_limit
     chmod 0664 /sys/power/cpufreq_max_limit
     chmod 0664 /sys/power/execution_mode_change
-
-    #EMS
-    chown system system /sys/kernel/ems/emstune/req_mode
-    chmod 0664 /sys/kernel/ems/emstune/req_mode
 
     #CPUSET
     chown system system /dev/cpuset/top-app/cpus
@@ -428,44 +384,56 @@ on boot
     chmod 0664 /dev/cpuset/cpus
     write /dev/cpuset/top-app/cpus 0-7
     write /dev/cpuset/foreground/cpus 0-6
-    write /dev/cpuset/background/cpus 0-2
+    write /dev/cpuset/background/cpus 0-1
     write /dev/cpuset/system-background/cpus 0-3
     write /dev/cpuset/restricted/cpus 0-3
+
+    setprop vendor.powerhal.init 1
 
     # Cstate node
     chown system system /sys/power/cstate_control
     chmod 0664 /sys/power/cstate_control
 
     # Permissions for input_booster
-    chown system system /sys/class/input_booster/touch/level
-    chown system system /sys/class/input_booster/touch/head
-    chown system system /sys/class/input_booster/touch/tail
-    chmod 0664 /sys/class/input_booster/touch/level
-    chmod 0664 /sys/class/input_booster/touch/head
-    chmod 0664 /sys/class/input_booster/touch/tail
+    chown system radio /sys/class/input_booster/level
+    chown system radio /sys/class/input_booster/head
+    chown system radio /sys/class/input_booster/tail
+    chown system radio /sys/class/input_booster/touchkey/level
+    chown system radio /sys/class/input_booster/touchkey/freq
+    chown system radio /sys/class/input_booster/touchkey/time
+    chmod 0664 /sys/class/input_booster/level
+    chmod 0664 /sys/class/input_booster/head
+    chmod 0664 /sys/class/input_booster/tail
+    chmod 0664 /sys/class/input_booster/touchkey/level
+    chmod 0664 /sys/class/input_booster/touchkey/freq
+    chmod 0664 /sys/class/input_booster/touchkey/time
 
     # LPM Info
     chown system system /efs/lpm_info.log
     chmod 0660 /efs/lpm_info.log
 
+    # Permissions for gnss
+    chmod 0660 /dev/gnss_ipc
+    chown system system /dev/gnss_ipc
+
     #GPU
-    chown root system /sys/devices/platform/11500000.mali/cl_boost_disable
-    chown root system /sys/devices/platform/11500000.mali/dvfs_min_lock
-    chown root system /sys/devices/platform/11500000.mali/dvfs_max_lock
-    chown root system /sys/devices/platform/11500000.mali/dvfs_table
+    chown radio system /sys/devices/platform/11500000.mali/cl_boost_disable
+    chown radio system /sys/devices/platform/11500000.mali/dvfs_min_lock
+    chown radio system /sys/devices/platform/11500000.mali/dvfs_max_lock
+    chown radio system /sys/devices/platform/11500000.mali/dvfs_table
     chmod 0664 /sys/devices/platform/11500000.mali/cl_boost_disable
     chmod 0664 /sys/devices/platform/11500000.mali/dvfs_min_lock
     chmod 0664 /sys/devices/platform/11500000.mali/dvfs_max_lock
     chmod 0664 /sys/devices/platform/11500000.mali/dvfs_table
 
     #BUS
-    chown root system /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/scaling_devfreq_min
-    chown root system /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/available_frequencies
+    chown system radio /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/scaling_devfreq_min
+    chown system radio /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/available_frequencies
     chmod 0664 /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/scaling_devfreq_min
     chmod 0664 /sys/devices/platform/17000010.devfreq_mif/devfreq/17000010.devfreq_mif/available_frequencies
 
     #Secure OS
-    chown root system /sys/devices/system/sec_os_ctrl/migrate_os
+    chown system radio /sys/devices/system/sec_os_ctrl/migrate_os
     chmod 0664 sys/devices/system/sec_os_ctrl/migrate_os
 
 # Permission for USB SELECT
@@ -486,57 +454,27 @@ on boot
     chmod 0660 /sys/class/sec/switch/uart_sel
     chown system system /sys/class/sec/switch/uart_sel
 
-# Permissions for  LSI NFC
-    chmod 0660 /dev/sec-nfc
-    chown nfc nfc /dev/sec-nfc
-
-# FINGERPRINT FRAMEWORK : starts goodixfingerprintd
-service goodixd /vendor/bin/goodixfingerprintd
-    class late_start
-    user system
-    group media_rw system
-
-on early-fs
-    start vold
-    write /sys/devices/platform/fmp/fmp-fips/fmp_fips_run 1
+# Permissions for NAD
+    symlink /dev/block/by-name/nad_refer /dev/block/NAD_REFER
+    symlink /dev/block/by-name/ufs_test /dev/block/UFS_TEST
 
 on late-fs
-    wait_for_prop hwservicemanager.ready true
     mount_all /vendor/etc/fstab.${ro.hardware} --late
 
 on fs
     start hwservicemanager
     mount_all /vendor/etc/fstab.${ro.hardware} --early
-
     # We need to seperate mounting SEC_EFS partition from fstab file due to GSI image loading case
+
     wait /dev/block/by-name/sec_efs
     mount ext4 /dev/block/by-name/sec_efs /efs nosuid nodev noatime noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic
 
-    setprop ro.crypto.fuse_sdcard true
-
-    wait /dev/block/by-name/spu
-    mount ext4 /dev/block/by-name/spu /spu nosuid nodev noatime noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic
-
     restorecon_recursive /mnt/vendor/efs
-    restorecon_recursive /mnt/vendor/cpefs
     restorecon_recursive /mnt/vendor/persist
-    restorecon_recursive /data
 
     chown radio system /mnt/vendor/efs
     chmod 0771 /mnt/vendor/efs
-    chown radio system /mnt/vendor/cpefs
-    chmod 0771 /mnt/vendor/cpefs
     chown system system /mnt/vendor/persist
-
-    mkdir /mnt/vendor/persist/data/sfs 0700 system system
-    mkdir /mnt/vendor/persist/data/tz 0700 system system
-
-    # Enable rmnet data and aggregation
-    setprop persist.rmnet.mux enabled
-    setprop persist.rmnet.data.enable true
-    setprop persist.data.wda.enable true
-    setprop persist.data.df.agg.dl_pkt 10
-    setprop persist.data.df.agg.dl_size 4096
 
 # Permissions for ION
     chmod 0660 /sys/class/ion_cma/ion_video_ext/isolated
@@ -560,157 +498,76 @@ on fs
     chown system radio /sys/class/lcd/panel/enable_fd
     chown system radio /sys/class/lcd/panel/conn_det
 
-# Permissions for gnss
-    chmod 0660 /dev/gnss_ipc
-    chown system system /dev/gnss_ipc
-
-#mail
-    chown root system /sys/devices/platform/11500000.mali/dvfs_min_lock
-    chown root system /sys/devices/platform/11500000.mali/dvfs_max_lock
-    chmod 664 /sys/devices/platform/11500000.mali/dvfs_min_lock
-    chmod 664 /sys/devices/platform/11500000.mali/dvfs_max_lock
-
-# Copy DRM Key
-#    copy /system/app/wv.keys /factory/wv.keys
-
-# Permission for DRM Key
-#    chmod 0644 /factory/wv.keys
-
-# FM Radio
-    chmod 0666 /dev/radio0
-
-# Permission for flashlight control for HAL3.3
-# The Istor espresso board does not have the flash led h/w, So the below permission line are blocked.
-# If you want to test the flashlight in board which have the flash led h/w, Enable the below blocked lines.
-    chmod 0660 /sys/class/camera/flash/rear_torch_flash
-    chown system camera /sys/class/camera/flash/rear_torch_flash
-    chmod 0660 /sys/class/camera/flash/rear_flash
-    chown cameraserver system /sys/class/camera/flash/rear_flash
-
-# Flashlight control for HAL3
-   chmod 0660 /sys/class/leds/fled-s2mu106/fled_mode
-   chown system camera /sys/class/leds/fled-s2mu106/fled_mode
-   chmod 0660 /sys/class/leds/fled-s2mu106/fled_torch_curr
-   chown system camera /sys/class/leds/fled-s2mu106/fled_torch_curr
-
-#load ecd firmware
-    write /proc/ecd/load_firmware 1
-
-service fuse_sdcard /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard /storage/sdcard
-    class late_start
-    disabled
-service fuse_usb1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usb1 /storage/usb1
-    class late_start
-    disabled
-service fuse_usb2 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usb2 /storage/usb2
-    class late_start
-    disabled
-
-service abox /vendor/bin/main_abox 14a50000.abox /data/vendor/log/abox
-    class late_start
-    user audioserver
-    group system
-
-service abox_log /vendor/bin/abox_log sec-audio-debug /data/vendor/log/abox
-    class late_start
-    user audioserver
-    group system
-
-# scsc daemon
-#    service wlbtd /vendor/bin/wlbtd
-#    class main
-#    user wifi
-#    group wifi inet log sdcard_rw misc
-
-# on userdebug and eng builds, enable kgdb on the serial console
-on property:ro.debuggable=1
-    write /sys/module/kgdboc/parameters/kgdboc ttyFIQ1
-    write /sys/module/fiq_debugger/parameters/kgdb_enable 1
-
-## SCSC WLAN
-# WiFi wpa suppplicant service
-# service wpa_supplicant /vendor/bin/hw/wpa_supplicant -ddd -t \
-#    -ip2p0  -Dnl80211 -c/data/vendor/wifi/wpa/p2p_supplicant.conf -N \
-#    -iwlan0 -Dnl80211 -c/data/vendor/wifi/wpa/wpa_supplicant.conf \
-#    -O/data/vendor/wifi/wpa/sockets \
-#    -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
-#    #   we will start as root and wpa_supplicant will switch to user wifi
-#    #   after setting up the capabilities required for WEXT
-#    #   user wifi
-#    #   group wifi inet keystore
-#    interface android.hardware.wifi.supplicant@1.0::ISupplicant default
-#    interface android.hardware.wifi.supplicant@1.1::ISupplicant default
-#    interface android.hardware.wifi.supplicant@1.2::ISupplicant default
-#    class main
-#    socket wpa_wlan0 dgram 660 wifi wifi
-#    disabled
-#    oneshot
-#    seclabel u:r:hal_wifi_supplicant_default:s0
-
-service dhcpcd_wlan0 /vendor/bin/dhcpcd -aABDKL
-        class main
-        disabled
-        oneshot
-
-service iprenew_wlan0 /vendor/bin/dhcpcd -n
-        class main
-        disabled
-        oneshot
-
-service dhcpcd_p2p /vendor/bin/dhcpcd -aABKL
-        class main
-        disabled
-        oneshot
-
-service iprenew_p2p /vendor/bin/dhcpcd -n
-        class main
-        disabled
-        oneshot
-
-# SPE-1748: PANU DHCP Client not launched
-service dhcpcd_bt-pan /vendor/bin/dhcpcd -ABKL
-        class main
-        disabled
-        oneshot
-
-service iprenew_bt-pan /vendor/bin/dhcpcd -n
-        class main
-        disabled
-        oneshot
-
-# Sysscope
-service prepare_param /system/bin/prepare_param.sh /dev/block/platform/12100000.dwmmc0/by-name/param
-    class core
-    user root
-    group root
-    seclabel u:r:prepare_param:s0
-    oneshot
-
-# SSWAP
-on boot
-    write /proc/sys/vm/swappiness 60
-
-# Set watchdog timer to 40 seconds and pet it every 10 seconds to get a 30 second margin
-# Increase watchdogd priority for keeping up schedule
-service watchdogd /system/bin/watchdogd 10 30
-    class core
-    oneshot
-    priority -10
-    seclabel u:r:watchdogd:s0
-
-# sensorhub fw
-on post-fs
-#    chmod 0770 /spu/sensorhub
-#    chmod 0660 /spu/sensorhub/shub_spu.bin
-#    chown root system /spu/sensorhub
-#    chown root system /spu/sensorhub/shub_spu.bin
-    write /sys/class/sensors/ssp_sensor/fs_ready 1
+# Permissions for MDNIE
+    chown system media_rw /sys/class/mdnie/mdnie/mode
+    chown system media_rw /sys/class/mdnie/mdnie/scenario
+    chown system system /sys/class/mdnie/mdnie/mdnie_ldu
+    chown system system /sys/class/mdnie/mdnie/night_mode
+    chown system system /sys/class/mdnie/mdnie/whiteRGB
+    chown system system /sys/class/mdnie/mdnie/light_notification
 
 # Sensors permissions
-on post-fs-data
+# Permissions for Fingerprint sensor
+    chmod 0660 /dev/goodix_fp
+    chown system system /dev/goodix_fp
+    chown system radio /sys/class/fingerprint/fingerprint/type_check
+    chown system radio /sys/class/fingerprint/fingerprint/name
+    chown system radio /sys/class/fingerprint/fingerprint/vendor
+    chown system radio /sys/class/fingerprint/fingerprint/adm
+    chown system radio /sys/class/fingerprint/fingerprint/bfs_values
+    chown system radio /sys/class/fingerprint/fingerprint/intcnt
+    chown system radio /sys/class/fingerprint/fingerprint/resetcnt
+
+    mkdir /data/vendor/biometrics 0770 system system
+    mkdir /data/vendor/fpSnrTest 0770 system system
+
+# FINGERPRINT FRAMEWORK : starts goodixfingerprintd
+service goodixd /vendor/bin/goodixfingerprintd
+    class late_start
+    user system
+    group media_rw system
+
+on early-fs
+    start vold
+    write /sys/devices/platform/fmp/fmp-fips/fmp_fips_run 1
+
+# Sensors permissions
 # FactoryApp(SensorHub)
+    chown root system /efs/FactoryApp/baro_delta
+    chmod 0660 /efs/FactoryApp/baro_delta
+    chown root system /efs/FactoryApp/gyro_cal_data
+    chmod 0660 /efs/FactoryApp/gyro_cal_data
     chown root system /efs/FactoryApp/cal_data
-    chown root system /efs/FactoryApp/prox_settings
+    chmod 0660 /efs/FactoryApp/cal_data
+    chown root system /efs/FactoryApp/mag_cal_data
+    chmod 0660 /efs/FactoryApp/mag_cal_data
+
+# Gyro_sensor
+     chown system radio /sys/class/sensors/gyro_sensor/power_on
+     chown system radio /sys/class/sensors/gyro_sensor/power_off
+     chown system radio /sys/class/sensors/gyro_sensor/temperature
+     chown system radio /sys/class/sensors/gyro_sensor/selftest
+     chown system radio /sys/class/sensors/gyro_sensor/selftest_dps
+     chown system radio /sys/class/sensors/gyro_sensor/vendor
+     chown system radio /sys/class/sensors/gyro_sensor/name
+         chown system system /sys/class/sensors/gyro_sensor/dhr_sensor_info
+
+# Magnetic_sensor
+    chown system radio /sys/class/sensors/magnetic_sensor/raw_data
+    chown system radio /sys/class/sensors/magnetic_sensor/vendor
+    chown system radio /sys/class/sensors/magnetic_sensor/name
+    chown system radio /sys/class/sensors/magnetic_sensor/selftest
+    chown system radio /sys/class/sensors/magnetic_sensor/raw_data
+    chown system system /sys/class/sensors/magnetic_sensor/dhr_sensor_info
+
+# Light_sensor
+    chown system radio /sys/class/sensors/light_sensor/lux
+    chown system radio /sys/class/sensors/light_sensor/raw_data
+    chown system radio /sys/class/sensors/light_sensor/vendor
+    chown system radio /sys/class/sensors/light_sensor/name
+    chown system system /sys/class/sensors/light_sensor/dhr_sensor_info
+    chown system radio /sys/class/sensors/light_sensor/light_circle
+
 # Accelerometer_sensor
     chown system radio /sys/class/sensors/accelerometer_sensor/raw_data
     chown system radio /sys/class/sensors/accelerometer_sensor/calibration
@@ -722,6 +579,7 @@ on post-fs-data
     chown system system /sys/class/sensors/accelerometer_sensor/dhr_sensor_info
     chown system system /efs/calibration_data
     chmod 0666 /efs/calibration_data
+
 # Proximity_sensor
     chown system radio /sys/class/sensors/proximity_sensor/state
     chown system radio /sys/class/sensors/proximity_sensor/raw_data
@@ -735,6 +593,15 @@ on post-fs-data
     chown system radio /sys/class/sensors/proximity_sensor/prox_trim
     chown system radio /sys/class/sensors/proximity_sensor/modify_settings
     chown system system /sys/class/sensors/proximity_sensor/dhr_sensor_info
+
+# Barometer_sensor
+    chown system radio /sys/class/sensors/barometer_sensor/sea_level_pressure
+    chown system radio /sys/class/sensors/barometer_sensor/vendor
+    chown system radio /sys/class/sensors/barometer_sensor/name
+    chown system radio /sys/class/sensors/barometer_sensor/calibration
+    chown system radio /sys/class/sensors/barometer_sensor/temperature
+    chown system system /sys/class/sensors/barometer_sensor/dhr_sensor_info
+
 # SensorHub
     chown system radio /sys/class/sensors/ssp_sensor/enable
     chown system radio /sys/class/sensors/ssp_sensor/mcu_rev
@@ -750,137 +617,196 @@ on post-fs-data
     chmod 0600 /dev/batch_io
     chown system system /dev/batch_io
 
+# Sensorhub IIO
+    chown system radio /sys/class/sensors/ssp_sensor/sensor_state
+    chmod 0600 /dev/batch_io
+    chown system system /dev/batch_io
+
 # Meta event
     chown system radio /sys/class/sensors/sensor_dev/flush
-# Grip Sensor
-    chown system radio /sys/class/sensors/grip_sensor/noti_enable
-# SX93xx
-    chown system radio /sys/class/sensors/grip_sensor/analog_gain
-    chown system radio /sys/class/sensors/grip_sensor/analog_gain_2ch
-    chown system radio /sys/class/sensors/grip_sensor/avg_negfilt
-    chown system radio /sys/class/sensors/grip_sensor/avg_negfilt_2ch
-    chown system radio /sys/class/sensors/grip_sensor/avg_posfilt
-    chown system radio /sys/class/sensors/grip_sensor/avg_posfilt_2ch
-    chown system radio /sys/class/sensors/grip_sensor/avg_thresh
-    chown system radio /sys/class/sensors/grip_sensor/avg_thresh_2ch
-    chown system radio /sys/class/sensors/grip_sensor/cal_state
-    chown system radio /sys/class/sensors/grip_sensor/closedeb
-    chown system radio /sys/class/sensors/grip_sensor/closedeb_2ch
-    chown system radio /sys/class/sensors/grip_sensor/diff_avg
-    chown system radio /sys/class/sensors/grip_sensor/diff_avg_2ch
-    chown system radio /sys/class/sensors/grip_sensor/fardeb
-    chown system radio /sys/class/sensors/grip_sensor/fardeb_2ch
-    chown system radio /sys/class/sensors/grip_sensor/gain
-    chown system radio /sys/class/sensors/grip_sensor/gain_2ch
-    chown system radio /sys/class/sensors/grip_sensor/grip_ref_cap
-    chown system radio /sys/class/sensors/grip_sensor/grip_ref_cap_2ch
-    chown system radio /sys/class/sensors/grip_sensor/hysteresis
-    chown system radio /sys/class/sensors/grip_sensor/hysteresis_2ch
-    chown system radio /sys/class/sensors/grip_sensor/irq_count
-    chown system radio /sys/class/sensors/grip_sensor/irq_count_2ch
-    chown system radio /sys/class/sensors/grip_sensor/menual_calibrate
-    chown system radio /sys/class/sensors/grip_sensor/mode
-    chown system radio /sys/class/sensors/grip_sensor/motion
-    chown system radio /sys/class/sensors/grip_sensor/name
-    chown system radio /sys/class/sensors/grip_sensor/normal_threshold
-    chown system radio /sys/class/sensors/grip_sensor/normal_threshold_2ch
-    chown system radio /sys/class/sensors/grip_sensor/noti_enable
-    chown system radio /sys/class/sensors/grip_sensor/onoff
-    chown system radio /sys/class/sensors/grip_sensor/phase
-    chown system radio /sys/class/sensors/grip_sensor/proxstatus
-    chown system radio /sys/class/sensors/grip_sensor/proxstatus_2ch
-    chown system radio /sys/class/sensors/grip_sensor/raw_data
-    chown system radio /sys/class/sensors/grip_sensor/raw_data_2ch
-    chown system radio /sys/class/sensors/grip_sensor/rawfilt
-    chown system radio /sys/class/sensors/grip_sensor/rawfilt_2ch
-    chown system radio /sys/class/sensors/grip_sensor/register_read
-    chown system radio /sys/class/sensors/grip_sensor/register_read_all
-    chown system radio /sys/class/sensors/grip_sensor/register_write
-    chown system radio /sys/class/sensors/grip_sensor/regproxdata
-    chown system radio /sys/class/sensors/grip_sensor/reset
-    chown system radio /sys/class/sensors/grip_sensor/resolution
-    chown system radio /sys/class/sensors/grip_sensor/resolution_2ch
-    chown system radio /sys/class/sensors/grip_sensor/sampling_freq
-    chown system radio /sys/class/sensors/grip_sensor/sampling_freq_2ch
-    chown system radio /sys/class/sensors/grip_sensor/scan_period
-    chown system radio /sys/class/sensors/grip_sensor/unknown_state
-    chown system radio /sys/class/sensors/grip_sensor/unknown_state_2ch
-    chown system radio /sys/class/sensors/grip_sensor/useful_avg
-    chown system radio /sys/class/sensors/grip_sensor/useful_avg_2ch
-    chown system radio /sys/class/sensors/grip_sensor/useful_filt
-    chown system radio /sys/class/sensors/grip_sensor/useful_filt_2ch
-    chown system radio /sys/class/sensors/grip_sensor/vendor 
 
-    chown system radio /sys/class/sensors/grip_sensor_sub/analog_gain
-    chown system radio /sys/class/sensors/grip_sensor_sub/analog_gain_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/avg_negfilt
-    chown system radio /sys/class/sensors/grip_sensor_sub/avg_negfilt_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/avg_posfilt
-    chown system radio /sys/class/sensors/grip_sensor_sub/avg_posfilt_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/avg_thresh
-    chown system radio /sys/class/sensors/grip_sensor_sub/avg_thresh_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/cal_state
-    chown system radio /sys/class/sensors/grip_sensor_sub/closedeb
-    chown system radio /sys/class/sensors/grip_sensor_sub/closedeb_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/diff_avg
-    chown system radio /sys/class/sensors/grip_sensor_sub/diff_avg_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/fardeb
-    chown system radio /sys/class/sensors/grip_sensor_sub/fardeb_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/gain
-    chown system radio /sys/class/sensors/grip_sensor_sub/gain_2ch
+# Abov
+    chown system radio /sys/class/sensors/grip_sensor/noti_enable
+    chown system radio /sys/class/sensors/grip_sensor/motion
+    chown system radio /sys/class/sensors/grip_sensor/unknown_state
+        chown system radio /sys/class/sensors/grip_sensor/unknown_state_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_irq_count
+    chown system radio /sys/class/sensors/grip_sensor/grip_threshold
+    chown system radio /sys/class/sensors/grip_sensor/grip_total_cap
+    chown system radio /sys/class/sensors/grip_sensor/grip_sar_enable
+    chown system radio /sys/class/sensors/grip_sensor/grip_sw_reset
+    chown system radio /sys/class/sensors/grip_sensor/grip_earjack
+    chown system radio /sys/class/sensors/grip_sensor/grip
+    chown system radio /sys/class/sensors/grip_sensor/grip_baseline
+    chown system radio /sys/class/sensors/grip_sensor/grip_raw
+    chown system radio /sys/class/sensors/grip_sensor/grip_ref_cap
+    chown system radio /sys/class/sensors/grip_sensor/grip_gain
+    chown system radio /sys/class/sensors/grip_sensor/grip_gain_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_check
+    chown system radio /sys/class/sensors/grip_sensor/grip_sar_only_mode
+    chown system radio /sys/class/sensors/grip_sensor/grip_sar_press_threshold
+    chown system radio /sys/class/sensors/grip_sensor/grip_sar_release_threshold
+    chown system radio /sys/class/sensors/grip_sensor/grip_firm_version_phone
+    chown system radio /sys/class/sensors/grip_sensor/grip_firm_version_panel
+    chown system radio /sys/class/sensors/grip_sensor/grip_firm_update
+    chown system radio /sys/class/sensors/grip_sensor/grip_firm_update_status
+    chown system radio /sys/class/sensors/grip_sensor/grip_irq_state
+    chown system radio /sys/class/sensors/grip_sensor/grip_irq_en_cnt
+    chown system radio /sys/class/sensors/grip_sensor/grip_reg_rw
+    chown system radio /sys/class/sensors/grip_sensor/grip_crc_check
+    chown system radio /sys/class/sensors/grip_sensor/grip_sw_reset_ready
+    chown system radio /sys/class/sensors/grip_sensor/grip_register_recover
+
+    chown system radio /sys/class/sensors/grip_sensor/grip_sar_press_threshold_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_sar_release_threshold_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_irq_count_2ch
+
+    chown system radio /sys/class/sensors/grip_sensor/grip_threshold_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_total_cap_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_baseline_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_raw_2ch
+    chown system radio /sys/class/sensors/grip_sensor/grip_check_2ch
+
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_irq_count
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_threshold
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_total_cap
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sar_enable
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sw_reset
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_earjack
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_baseline
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_raw
     chown system radio /sys/class/sensors/grip_sensor_sub/grip_ref_cap
-    chown system radio /sys/class/sensors/grip_sensor_sub/grip_ref_cap_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/hysteresis
-    chown system radio /sys/class/sensors/grip_sensor_sub/hysteresis_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/irq_count
-    chown system radio /sys/class/sensors/grip_sensor_sub/irq_count_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/menual_calibrate
-    chown system radio /sys/class/sensors/grip_sensor_sub/mode
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_gain
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_gain_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_check
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sar_only_mode
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sar_press_threshold
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sar_release_threshold
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_firm_version_phone
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_firm_version_panel
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_firm_update
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_firm_update_status
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_irq_state
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_irq_en_cnt
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_reg_rw
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_crc_check
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sw_reset_ready
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_register_recover
+
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sar_press_threshold_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_sar_release_threshold_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_irq_count_2ch
+
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_threshold_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_total_cap_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_baseline_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_raw_2ch
+    chown system radio /sys/class/sensors/grip_sensor_sub/grip_check_2ch
     chown system radio /sys/class/sensors/grip_sensor_sub/motion
-    chown system radio /sys/class/sensors/grip_sensor_sub/name
-    chown system radio /sys/class/sensors/grip_sensor_sub/normal_threshold
-    chown system radio /sys/class/sensors/grip_sensor_sub/normal_threshold_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/noti_enable
-    chown system radio /sys/class/sensors/grip_sensor_sub/onoff
-    chown system radio /sys/class/sensors/grip_sensor_sub/phase
-    chown system radio /sys/class/sensors/grip_sensor_sub/proxstatus
-    chown system radio /sys/class/sensors/grip_sensor_sub/proxstatus_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/raw_data
-    chown system radio /sys/class/sensors/grip_sensor_sub/raw_data_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/rawfilt
-    chown system radio /sys/class/sensors/grip_sensor_sub/rawfilt_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/register_read
-    chown system radio /sys/class/sensors/grip_sensor_sub/register_read_all
-    chown system radio /sys/class/sensors/grip_sensor_sub/register_write
-    chown system radio /sys/class/sensors/grip_sensor_sub/regproxdata
-    chown system radio /sys/class/sensors/grip_sensor_sub/reset
-    chown system radio /sys/class/sensors/grip_sensor_sub/resolution
-    chown system radio /sys/class/sensors/grip_sensor_sub/resolution_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/sampling_freq
-    chown system radio /sys/class/sensors/grip_sensor_sub/sampling_freq_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/scan_period
     chown system radio /sys/class/sensors/grip_sensor_sub/unknown_state
     chown system radio /sys/class/sensors/grip_sensor_sub/unknown_state_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/useful_avg
-    chown system radio /sys/class/sensors/grip_sensor_sub/useful_avg_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/useful_filt
-    chown system radio /sys/class/sensors/grip_sensor_sub/useful_filt_2ch
-    chown system radio /sys/class/sensors/grip_sensor_sub/vendor 
+        chown system radio /sys/class/sensors/grip_sensor_sub/noti_enable
 
-# Create carrier folder for HiddenMenu
+# Permissions for  LSI NFC
+    chmod 0660 /dev/sec-nfc
+    chown nfc nfc /dev/sec-nfc
+
+# Diag-daemon
+    mkdir /efs/cpdebug 0771 radio system
+    symlink /dev/block/by-name/cp_debug /efs/cpdebug/node
+    chmod 0660 /efs/cpdebug/node
+    chown radio system /efs/cpdebug/node
+
+# ESE
+    chmod 0660 /dev/p3
+    chown system system /dev/p3
+
+# Permissions for NXP NFC
+    chmod 0660 /dev/pn547
+    chown nfc nfc /dev/pn547
+
+# Permissions for NXP ESE
+    chmod 0660 /dev/p61
+    chown system system /dev/p61
+
+# Permissions for Displayport
+# DP AUX switch control for factory test
+    chmod 0660 /sys/class/dp_sec/dp_sbu_sw_sel
+    chown system system /sys/class/dp_sec/dp_sbu_sw_sel
+# DP DEX control
+    chmod 0660 /sys/class/dp_sec/dex
+    chown system system /sys/class/dp_sec/dex
+# DP AUX dev control
+    chmod 0660 /dev/secdp_aux
+    chown system system /dev/secdp_aux
+# DP error info
+    chmod 0660 /sys/class/dp_sec/dp_error_info
+    chown system system /sys/class/dp_sec/dp_error_info
+# DP DRM
+    chmod 0660 /sys/class/dp_sec/dp_drm
+    chown system system /sys/class/dp_sec/dp_drm
+
+# Permissions for audio
+    chown system radio /sys/class/audio/earjack/select_jack
+    chown system radio /sys/class/audio/earjack/key_state
+    chown system radio /sys/class/audio/earjack/state
+    chown system radio /sys/class/audio/earjack/mic_adc
+
+# Cirrus Amp Calibration and Factory test
+    chown system audio /sys/class/cirrus/cirrus_cal/status
+    chown system audio /sys/class/cirrus/cirrus_cal/rdc
+    chown system audio /sys/class/cirrus/cirrus_cal/rdc_r
+    chown system audio /sys/class/cirrus/cirrus_cal/temp
+    chown system audio /sys/class/cirrus/cirrus_cal/temp_r
+    mkdir /efs/cirrus 0770 audioserver audio
+    chown audioserver audio /efs/cirrus/temp_cal
+    chown audioserver audio /efs/cirrus/rdc_cal
+    chown audioserver audio /efs/cirrus/rdc_cal_r
+    chmod 0660 /efs/cirrus/temp_cal
+    chmod 0660 /efs/cirrus/rdc_cal
+    chmod 0660 /efs/cirrus/rdc_cal_r
+    chown system audio /sys/class/cirrus/cirrus_cal/v_status
+    chown system audio /sys/class/cirrus/cirrus_cal/v_validation
+    chown system audio /sys/class/cirrus/cirrus_cal/v_validation_r
+
+# Cirrus Amp power
+    chown system audio /sys/class/cirrus/cirrus_pwr/status
+    chown system audio /sys/class/cirrus/cirrus_pwr/value
+    chown system audio /sys/class/cirrus/cirrus_pwr/value_r
+    chown system audio /sys/class/cirrus/cirrus_pwr/spk_t
+    chown system audio /sys/class/cirrus/cirrus_pwr/spk_t_r
+    chown system audio /sys/class/cirrus/cirrus_pwr/env_temp
+    chown system audio /sys/class/cirrus/cirrus_pwr/env_temp_r
+
+# Cirrus Amp Bigdata
+    chown system audio /sys/class/cirrus/cirrus_bd/max_exc_left
+    chown system audio /sys/class/cirrus/cirrus_bd/max_exc_right
+    chown system audio /sys/class/cirrus/cirrus_bd/max_temp_left
+    chown system audio /sys/class/cirrus/cirrus_bd/max_temp_right
+    chown system audio /sys/class/cirrus/cirrus_bd/max_temp_keep_left
+    chown system audio /sys/class/cirrus/cirrus_bd/max_temp_keep_right
+    chown system audio /sys/class/cirrus/cirrus_bd/over_exc_count_left
+    chown system audio /sys/class/cirrus/cirrus_bd/over_exc_count_right
+    chown system audio /sys/class/cirrus/cirrus_bd/over_temp_count_left
+    chown system audio /sys/class/cirrus/cirrus_bd/over_temp_count_right
+
+# FM Radio
+    chown system audio /dev/radio0
+    chmod 0660 /dev/radio0
+
+#load ecd firmware
+    write /proc/ecd/load_firmware 1
+
+# Set watchdog timer to 30 seconds and pet it every 10 seconds to get a 20 second margin
+service watchdogd /system/bin/watchdogd 10 20
+     user root
+     class core
+     oneshot
+     seclabel u:r:watchdogd:s0
+
+# sensorhub fw
 on post-fs
-    mkdir /efs/carrier 0755 radio system
-    chown radio system /efs/carrier
-    chown radio system /efs/carrier/HiddenMenu
-
-# Pageboostd
-on property:sys.boot_completed=1
-    start pageboostd
-
-service pageboostd /system/bin/pageboostd
-    class main
-    user system
-    group system mount radio net_bt sdcard_rw shell media media_rw
-    socket pageboostd seqpacket 0660 system system
-    disabled
-
+    write /sys/class/sensors/ssp_sensor/fs_ready 1
