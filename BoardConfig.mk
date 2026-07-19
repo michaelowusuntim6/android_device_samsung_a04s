@@ -69,7 +69,8 @@ BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
-BOARD_BOOTCONFIG += androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE := androidboot.dtbo_idx=5
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 
 # -----------------------------------------------------------------
 # Display
@@ -252,5 +253,4 @@ WPA_SUPPLICANT_VERSION           := VER_0_8_X
 
 # -----------------------------------------------------------------
 # OTA Assert (device‑specific)
-# -----------------------------------------------------------------
-TARGET_OTA_ASSERT_DEVICE := a04s
+# ------------------------------------------------
