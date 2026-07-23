@@ -66,6 +66,8 @@ BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
+# Bootconfig – all kernel parameters go here (recommended for Android 12+)
+BOARD_BOOTCONFIG += androidboot.dtbo_idx=5
 BOARD_BOOTCONFIG += androidboot.selinux=permissive
 
 ## Display
@@ -194,15 +196,8 @@ BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 ## USB
 $(call soong_config_set,samsungUsbGadgetVars,gadget_name,13600000.dwc3)
 
-## Verified Boot
-BOARD_AVB_ENABLE := true
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 0
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --algorithm NONE
-BOARD_AVB_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
-BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
-BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
-BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+## Verified Boot (AVB) – disabled to avoid verification issues
+BOARD_AVB_ENABLE := false
 
 ## Wi-Fi
 BOARD_WLAN_DEVICE                := slsi
