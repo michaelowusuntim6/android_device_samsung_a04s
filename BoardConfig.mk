@@ -19,10 +19,6 @@
 
 DEVICE_PATH := device/samsung/a04s
 
-# Board
-TARGET_BOARD_INFO_FILE := device/samsung/a04s/board-info.txt
-
-
 ## Inherit proprietary vendor configuration
 include vendor/samsung/a04s/BoardConfigVendor.mk
 
