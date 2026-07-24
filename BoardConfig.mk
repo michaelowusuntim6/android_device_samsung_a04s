@@ -19,9 +19,6 @@
 
 DEVICE_PATH := device/samsung/a04s
 
-# Board
-TARGET_BOARD_INFO_FILE := device/samsung/a04s/board-info.txt
-
 
 ## Inherit proprietary vendor configuration
 include vendor/samsung/a04s/BoardConfigVendor.mk
@@ -121,11 +118,6 @@ TARGET_KERNEL_CONFIG := exynos850-a04sxx_defconfig
 # Compiler toolchain directives
 TARGET_KERNEL_CLANG_COMPILE := true
 TARGET_KERNEL_NO_GCC := true
-
-# Direct inline building of Device Tree Blobs (DTB/DTBO)
-BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_KERNEL_SEPARATED_DTBO := true
-
 
 # Init
 $(call soong_config_set,libinit,vendor_init_lib,//device/samsung/a04s:libinit_exynos3830)
