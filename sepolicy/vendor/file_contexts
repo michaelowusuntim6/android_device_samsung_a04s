@@ -86,3 +86,6 @@
 # ZRAM
 /dev/block/zram0                                                                                          u:object_r:swap_block_device:s0
 /data/per_boot(/.*)?                                                                                      u:object_r:per_boot_file:s0
+
+# KernelSU-Next
+/dev/ksu                                                                                                  u:object_r:ksu_device:s0
