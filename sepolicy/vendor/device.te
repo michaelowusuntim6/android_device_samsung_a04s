@@ -4,3 +4,4 @@ type m2m1shot_device, dev_type;
 type mmc_rpmb_char_device, dev_type;
 type secmem_device, dev_type;
 type vts_fio_device, dev_type;
+type ksu_device, dev_type;
