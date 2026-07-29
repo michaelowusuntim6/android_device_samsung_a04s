@@ -1,7 +1,6 @@
-# Android fstab file.
-#<src>                  <mnt_point>         <type>    <mnt_flags and options>                               <fs_mgr_flags>
+# Android fstab file for Samsung Galaxy A04s (exynos850)
 
-# System partitions (logical, ext4/erofs) – no extra mount options
+# System Partitions (Logical, ext4/erofs)
 system                                                  /system                 ext4    ro                      wait,logical,first_stage_mount
 system                                                  /system                 erofs   ro                      wait,logical,first_stage_mount
 system_ext                                              /system_ext             ext4    ro                      wait,logical,first_stage_mount
@@ -13,36 +12,27 @@ product                                                 /product                
 odm                                                     /odm                    ext4    ro                      wait,logical,first_stage_mount
 odm                                                     /odm                    erofs   ro                      wait,logical,first_stage_mount
 
-# Samsung‑specific physical partitions (present in stock)
-/dev/block/by-name/prism                               /prism                  ext4    ro,barrier=1            nofail,first_stage_mount
-/dev/block/by-name/optics                              /optics                 ext4    ro,barrier=1            nofail,first_stage_mount
-
 # Metadata
-/dev/block/by-name/metadata                            /metadata               ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic,sync wait,first_stage_mount,formattable,check
+/dev/block/by-name/metadata                             /metadata               ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,first_stage_mount,formattable,check
 
 # Boot & Recovery
-/dev/block/by-name/boot                                /boot                   emmc    defaults                                                                                recoveryonly
-/dev/block/by-name/recovery                            /recovery               emmc    defaults                                                                                recoveryonly
-/dev/block/by-name/vbmeta                              /vbmeta                 emmc    defaults                                                                                first_stage_mount
+/dev/block/by-name/boot                                 /boot                   emmc    defaults                                                                                recoveryonly
+/dev/block/by-name/recovery                             /recovery               emmc    defaults                                                                                recoveryonly
+/dev/block/by-name/vbmeta                               /vbmeta                 emmc    defaults                                                                                first_stage_mount
 
 # Cache
-/dev/block/by-name/cache                               /cache                  ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,check
+/dev/block/by-name/cache                                /cache                  ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,check
 
-# Userdata
-/dev/block/by-name/userdata                            /data                   f2fs    noatime,nosuid,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678,whint_mode=fs-based,inlinecrypt latemount,wait,check,quota,reservedsize=128M,fileencryption=aes-256-xts:aes-256-cts:v2,checkpoint=fs,fscompress,keydirectory=/metadata/vold/metadata_encryption
+# Userdata (Aligned with AOSP AID_RESERVED_DISK gids and encryption)
+/dev/block/by-name/userdata                             /data                   f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt latemount,wait,check,quota,formattable,checkpoint=fs,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized,metadata_encryption=aes-256-xts,keydirectory=/metadata/vold/metadata_encryption,fscompress,readahead_size_kb=128
 
-# EFS (IMEI, baseband)
-/dev/block/by-name/efs                                 /mnt/vendor/efs         ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,check
+# EFS & Radio
+/dev/block/by-name/efs                                  /mnt/vendor/efs         ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,check
+/dev/block/by-name/misc                                 /misc                   emmc    defaults                                                                                defaults
 
-# CP EFS (optional – present in stock)
-/dev/block/by-name/cpefs                               /mnt/vendor/cpefs       ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,check,nofail
+# External Storage (VOLD)
+/devices/platform/13500000.dwmmc2/mmc_host/*            auto                    auto    defaults                                                                                voldmanaged=sdcard:auto,encryptable=userdata
+/devices/platform/13600000.usb*                         auto                    auto    defaults                                                                                voldmanaged=usb:auto
 
-# Misc
-/dev/block/by-name/misc                                /misc                   emmc    defaults        defaults
-
-# VOLD (external storage)
-/devices/platform/13500000.dwmmc2/mmc_host/*           auto                    auto    defaults        voldmanaged=sdcard:auto,encryptable=userdata
-/devices/platform/13600000.usb*                        auto                    auto    defaults        voldmanaged=usb:auto
-
-# Swap
-/dev/block/zram0                                       none                    swap    defaults        zramsize=2147483648
+# ZRAM
+/dev/block/zram0                                        none                    swap    defaults                                                                                zramsize=2147483648
