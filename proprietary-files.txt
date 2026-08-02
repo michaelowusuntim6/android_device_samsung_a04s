@@ -254,3 +254,7 @@ vendor/lib64/vendor.samsung.hardware.nfc_aidl-V1-ndk.so
 vendor/etc/nfc/st21nfc_conf.txt
 vendor/etc/libnfc-hal-st.conf
 vendor/firmware/nfc/st21nfc_fw.bin
+vendor/etc/permissions/android.hardware.hardware_keystore.xml
+vendor/etc/permissions/android.hardware.keystore.app_attest_key.xml
+vendor/etc/permissions/android.software.verified_boot.xml
+vendor/etc/permissions/vendor.samsung.hardware.telephony.gsm.xml
