@@ -45,10 +45,8 @@ vendor/lib/vendor.samsung.hardware.thermal@1.0.so
 vendor/etc/btcon.json
 vendor/lib/libexynoscamera3.so
 vendor/lib/libexynoscamera_tdnr_plugin.so
-vendor/lib/librmsclib1_32bit.so
 vendor/lib/libsecfr_engine.so
 vendor/lib/libsecfr_model.so
-vendor/lib/libsec2lsi_conversion.so
 
 # Charger Firmware - From Samsung package version A047FXXSDEYL1
 vendor/firmware/mfc_fw.bin
@@ -73,20 +71,13 @@ vendor/lib/vendor.samsung.hardware.biometrics.fingerprint@3.0.so
 # Firmware - From Samsung package version A047FXXSDEYL1
 vendor/firmware/abox_tplg.bin
 vendor/firmware/abox_tplg.conf
-vendor/firmware/aw882xx_pid_2055a_acf.bin
-vendor/firmware/aw882xx_pid_2055b_acf.bin
 vendor/firmware/listenbackeffect.bin
 vendor/firmware/MCD_NACHO_slog.bin
 vendor/firmware/rxse.bin
 vendor/firmware/sb_others.bin
 vendor/firmware/setfile_gc02m1.bin
-vendor/firmware/setfile_gc02m1_macro.bin
-vendor/firmware/setfile_gc08a3.bin
-vendor/firmware/setfile_gc5035.bin
 vendor/firmware/setfile_jn1.bin
 vendor/firmware/tdnr_GC02M1.json
-vendor/firmware/tdnr_GC08A3.json
-vendor/firmware/tdnr_GC5035.json
 vendor/firmware/tdnr_S5KJN1.json
 vendor/firmware/txse1.bin
 vendor/firmware/txse2.bin
@@ -178,8 +169,6 @@ vendor/tee/00000000-0000-0000-0000-000000534b4d
 vendor/tee/00000000-0000-0000-0000-0000534b504d
 vendor/tee/00000000-0000-0000-0000-564c544b5052
 vendor/tee/00000000-0000-0000-0000-656e676d6f64
-vendor/tee/00000000-0000-0000-0000-000000010081
-vendor/tee/00000000-0000-0000-0000-000000020081
 vendor/tee/00000000-0000-0000-0000-42494f535542
 vendor/tee/00000000-0000-0000-0000-46494e474552
 vendor/tee/00000000-0000-0000-0000-5345435f4652
@@ -191,8 +180,6 @@ vendor/tee/00000000-0000-0000-0000-657365636f6d
 vendor/tee/00000000-0000-0000-0000-505256544545
 vendor/tee/driver/00000000-0000-0000-0000-564c544b4456
 vendor/tee/driver/00000000-0000-0000-0000-494363447256
-vendor/tee/driver/18d9f073-18a5-4ade-9def-875e07f7f293_
-vendor/tee/tui/resolution_common/ID00000100
 vendor/bin/tzts_daemon
 vendor/lib/libuuid.so;MODULE_SUFFIX=_vendor
 vendor/lib64/libuuid.so
