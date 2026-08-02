@@ -63,9 +63,11 @@ BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
-# Bootconfig – all kernel parameters go here (recommended for Android 12+)
-BOARD_BOOTCONFIG += androidboot.dtbo_idx=5
-BOARD_BOOTCONFIG += androidboot.selinux=permissive
+# Kernel command line
+BOARD_KERNEL_CMDLINE += androidboot.dtbo_idx=5
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE += androidboot.hardware=exynos850
+BOARD_KERNEL_CMDLINE += androidboot.boot_devices=12100000.dwmmc0
 
 ## Display
 BOARD_MINIMUM_DISPLAY_BRIGHTNESS := 1
