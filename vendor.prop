@@ -8,7 +8,7 @@
 # ==========================================
 ro.product.model=SM-A047F
 ro.product.device=a04s
-ro.product.name=a04snsxx
+ro.product.name=a04snnxx
 ro.hardware=exynos850
 
 # ==========================================
