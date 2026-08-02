@@ -29,7 +29,6 @@ vendor/lib/hw/camera.exynos850.so
 vendor/lib/libexynoscamera_plugin.so
 vendor/lib/libexynoscamera_plugin_utils.so
 vendor/lib/libremosaic_wrapper.so
-vendor/lib/libremosaiclib.so
 
 # Camera dependencies - From Samsung package version A047FXXSDEYL1
 vendor/lib/libexifa.camera.samsung.so
