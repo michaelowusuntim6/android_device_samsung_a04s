@@ -1,0 +1,8 @@
+# TEEGRIS property types (labels from stock vendor_property_contexts)
+type vendor_tzdaemon_prop, property_type;
+type vendor_tztsdaemon_prop, property_type;
+type vendor_teegris_prop, property_type;
+
+# teegris.rc sets vendor.TEEGRIS.loaded via init
+allow init vendor_teegris_prop:property_service set;
+allow vendor_init vendor_teegris_prop:property_service set;

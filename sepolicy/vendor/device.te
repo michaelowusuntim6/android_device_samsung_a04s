@@ -1,4 +1,3 @@
-type dtb_block_device, dev_type;
 type caminfo_device, dev_type;
 type m2m1shot_device, dev_type;
 type mmc_rpmb_char_device, dev_type;
