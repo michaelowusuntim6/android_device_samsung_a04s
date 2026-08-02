@@ -521,12 +521,6 @@ on fs
     mkdir /data/vendor/biometrics 0770 system system
     mkdir /data/vendor/fpSnrTest 0770 system system
 
-# FINGERPRINT FRAMEWORK : starts goodixfingerprintd
-service goodixd /vendor/bin/goodixfingerprintd
-    class late_start
-    user system
-    group media_rw system
-
 on early-fs
     start vold
     write /sys/devices/platform/fmp/fmp-fips/fmp_fips_run 1
