@@ -54,7 +54,7 @@ vendor/lib/libsec2lsi_conversion.so
 vendor/firmware/mfc_fw.bin
 
 # Codecs - From Samsung package version A047FXXSDEYL1
-vendor/etc/media_codecs.xml
+# media_codecs.xml is provided by the device tree (configs/media/media_codecs.xml)
 vendor/etc/media_codecs_performance.xml
 vendor/etc/media_profiles_V1_0.xml
 
