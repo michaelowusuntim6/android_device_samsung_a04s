@@ -1,5 +1,6 @@
 on early-init
     mkdir /mnt/vendor/efs 0771 radio system
+    mkdir /mnt/vendor/cpefs 0771 radio system
     mkdir /mnt/vendor/persist 0771 system system
 
 on init
@@ -470,10 +471,13 @@ on fs
     mount ext4 /dev/block/by-name/sec_efs /efs nosuid nodev noatime noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic
 
     restorecon_recursive /mnt/vendor/efs
+    restorecon_recursive /mnt/vendor/cpefs
     restorecon_recursive /mnt/vendor/persist
 
     chown radio system /mnt/vendor/efs
     chmod 0771 /mnt/vendor/efs
+    chown radio system /mnt/vendor/cpefs
+    chmod 0771 /mnt/vendor/cpefs
     chown system system /mnt/vendor/persist
 
 # Permissions for ION
