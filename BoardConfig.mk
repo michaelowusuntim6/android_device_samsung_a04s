@@ -222,3 +222,4 @@ WPA_SUPPLICANT_VERSION           := VER_0_8_X
 
 ## OTA Assert (device-specific)
 TARGET_OTA_ASSERT_DEVICE := a04s
+

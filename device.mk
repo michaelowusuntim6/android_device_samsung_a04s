@@ -21,7 +21,7 @@ COMMON_PATH := device/samsung/a04s
 $(call inherit-product, vendor/samsung/a04s/a04s-vendor.mk)
 
 # Inherit the safe 2GB baseline properties first
-$(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
+$(call inherit-product, frameworks/native/build/phone-xhdpi-4096-dalvik-heap.mk)
 
 PRODUCT_PRODUCT_PROPERTIES += \
     dalvik.vm.heapstartsize=8m \
@@ -35,6 +35,8 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 # Enable project quotas and casefolding for emulated storage without sdcardfs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
+
+PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true
 
 # Soong namespaces
 $(call inherit-product, hardware/samsung_slsi-linaro/config/config.mk)
