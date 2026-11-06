@@ -1,0 +1,33 @@
+# ---------------------------------------------------------------------------
+# Device-tree repository exclusions
+# Keep all source (makefiles, configs, DTS references, sepolicy, shims) tracked.
+# ---------------------------------------------------------------------------
+
+# Editor / IDE / OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Python bytecode (extract-files.py / setup-makefiles.py helpers)
+__pycache__/
+*.py[cod]
+
+# Local logs and temporary files
+*.log
+*.tmp
+*.orig
+*.rej
+*.bak
+
+# Generated device-tree build output (never source in this repository)
+*.dtb
+*.dtbo
+*.dtb.S
+
+# Patch/backup leftovers
+*.patch
