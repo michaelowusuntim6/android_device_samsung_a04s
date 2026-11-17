@@ -279,7 +279,6 @@ on post-fs-data
 
 # permissions for bluetooth.
     setprop ro.bt.bdaddr_path "/mnt/vendor/efs/bluetooth/bt_addr"
-    chown bluetooth bluetooth ro.bt.bdaddr_path
 
 # for BT MAC address
     mkdir /mnt/vendor/efs/bluetooth 0770 system bluetooth
@@ -295,7 +294,6 @@ on post-fs-data
     mkdir /data/vendor/wifi/wpa 0770 wifi system
     mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
     mkdir /data/vendor/wifi/hostapd/sockets 0770 wifi wifi
-    mkdir /vendor/etc/wifi 0770 system system
     mkdir /data/vendor/log/wifi 0770 wifi wifi
     chown wifi wifi /sys/wifi/memdump
 

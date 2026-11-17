@@ -15,6 +15,9 @@ odm                                                     /odm                    
 # Metadata
 /dev/block/by-name/metadata                             /metadata               ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,first_stage_mount,formattable,check
 
+# Samsung CSC/product configuration (consumed by libsec-ril/libsecaudioinfo)
+/dev/block/by-name/prism                               /prism                  ext4    ro,barrier=1            wait,nofail,first_stage_mount
+
 # Boot & Recovery
 /dev/block/by-name/boot                                 /boot                   emmc    defaults                                                                                recoveryonly
 /dev/block/by-name/recovery                             /recovery               emmc    defaults                                                                                recoveryonly

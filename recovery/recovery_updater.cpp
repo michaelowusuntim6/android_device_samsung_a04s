@@ -30,11 +30,13 @@ Value* VerifyBootloader(const char* name, State* state,
                       "%s() bootloader string too short: %s", name, bootloader.c_str());
   }
 
+  // Samsung bootloader names carry the bootloader binary version as the
+  // ninth character (A047FXXSDEYL1 -> 'D'). Refuse older binaries.
   char ninth_char = bootloader[8]; // index 8 = 9th character
-  if (ninth_char == '5') {
+  if (ninth_char >= 'D') {
     return StringValue("1");
   } else {
-    return StringValue("1");
+    return StringValue("0");
   }
 }
 

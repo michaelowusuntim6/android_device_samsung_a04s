@@ -64,8 +64,10 @@ BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 
 # Kernel command line
-BOARD_KERNEL_CMDLINE += androidboot.dtbo_idx=5
-BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+# This bootloader does not forward the boot-image header cmdline: loop.max_part=7
+# is present in the live boot header but absent from /proc/cmdline. dtbo_idx is
+# supplied by the bootloader itself and SELinux mode is controlled by the
+# bootloader (androidboot.selinux=enforcing), so neither belongs here.
 BOARD_KERNEL_CMDLINE += androidboot.hardware=exynos850
 BOARD_KERNEL_CMDLINE += androidboot.boot_devices=12100000.dwmmc0
 
@@ -223,3 +225,6 @@ WPA_SUPPLICANT_VERSION           := VER_0_8_X
 ## OTA Assert (device-specific)
 TARGET_OTA_ASSERT_DEVICE := a04s
 
+BUILD_BROKEN_MISSING_REQUIRED_MODULES := true
+ALLOW_MISSING_DEPENDENCIES := true
+DISABLE_DEXPREOPT_CHECK := true

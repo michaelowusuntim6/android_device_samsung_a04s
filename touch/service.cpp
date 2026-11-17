@@ -19,6 +19,9 @@ int main() {
     ABinderProcess_setThreadPoolMaxThreadCount(0);
 
     std::shared_ptr<TSPInit> gm = ndk::SharedRefBase::make<TSPInit>();
+    // Run check_connection once at service start so touch initialisation does
+    // not depend on the InputReader log monitor below.
+    gm->setEnabled(true);
     gm->startScreenMonitor();
     const std::string gm_instance = std::string(TSPInit::descriptor) + "/default";
     AServiceManager_addService(gm->asBinder().get(), gm_instance.c_str());

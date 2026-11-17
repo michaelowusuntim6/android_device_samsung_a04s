@@ -348,3 +348,9 @@ PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf
 
 PRODUCT_CFI_INCLUDE_PATHS += hardware/samsung_slsi/scsc_wifibt/wpa_supplicant_lib
+
+# Bridge Soong's generated init.environ.rc into the Kati target expected by
+# system/core/rootdir/create_root_structure.mk.
+$(OUT_DIR)/target/product/a04s/obj/ETC/init.environ.rc-soong_intermediates/init.environ.rc-soong: $(OUT_DIR)/soong/.intermediates/system/core/rootdir/init.environ.rc-soong/android_arm64_armv8-a/init.environ.rc
+	@mkdir -p $(dir $@)
+	cp -f $< $@

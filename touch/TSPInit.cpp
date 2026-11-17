@@ -15,11 +15,14 @@ namespace lineage {
 namespace touch {
 
 ndk::ScopedAStatus TSPInit::getEnabled(bool* _aidl_return) {
+    *_aidl_return = false;
     std::ifstream file(TSP_CMD_RESULT_NODE);
     if (file.is_open()) {
         std::string line;
         getline(file, line);
-        *_aidl_return = !line.compare("check_connection:NG");
+        // sec_cmd formats the result as "<command>:OK" on success and
+        // "<command>:NG" on failure (drivers/input/touchscreen/sec_ts_univ).
+        *_aidl_return = !line.compare("check_connection:OK");
         file.close();
     }
     return ndk::ScopedAStatus::ok();
